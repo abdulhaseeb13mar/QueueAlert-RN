@@ -14,7 +14,7 @@ const Stack = createStackNavigator();
 export default function AuthStack() {
   return (
     <Stack.Navigator
-      initialRouteName={constants.authScreens.Login}
+      initialRouteName={constants.authScreens.SignupPeople}
       screenOptions={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
