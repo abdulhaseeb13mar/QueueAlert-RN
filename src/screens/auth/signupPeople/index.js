@@ -34,22 +34,6 @@ const SignupPeople = () => {
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState('');
 
   const SignupUser = () => {
-    const a = {
-      additionalUserInfo: {isNewUser: true},
-      user: {
-        displayName: null,
-        email: 'abc@abc.com',
-        emailVerified: false,
-        isAnonymous: false,
-        metadata: [Object],
-        phoneNumber: null,
-        photoURL: null,
-        providerData: [Array],
-        providerId: 'firebase',
-        tenantId: null,
-        uid: 'f9Zi9fBVB7XQ9yDiyx3JKqVH3wp1',
-      },
-    };
     const validation = isFormValid(
       name,
       email,

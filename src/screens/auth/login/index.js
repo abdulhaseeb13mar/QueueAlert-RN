@@ -20,7 +20,7 @@ const Login = () => {
     if (!validation.status) {
       errorMsgHandler(validation.errCategory, validation.errMsg);
     } else {
-      setLoading(false);
+      setLoading(true);
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(async ({user}) => {
@@ -29,9 +29,22 @@ const Login = () => {
             .collection('People')
             .doc(user.uid)
             .get();
-          console.log(userInfo.data());
+          if (userInfo.exists) {
+            console.log(userInfo.data());
+            setLoading(false);
+          } else {
+            const vendorInfo = await firestore()
+              .collection('Vendors')
+              .doc(user.uid)
+              .get();
+            if (vendorInfo.exists) {
+              console.log(vendorInfo.data());
+              setLoading(false);
+            }
+          }
         })
         .catch(err => {
+          setLoading(false);
           console.log(err);
         });
     }
@@ -52,9 +65,7 @@ const Login = () => {
 
   return (
     <WrapperScreen>
-      <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
-        Signup People
-      </Text>
+      <Text style={{fontWeight: 'bold', textAlign: 'center'}}>Login</Text>
       <View style={styles.container}>
         <TextInput
           placeholder="Email"
