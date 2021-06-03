@@ -7,8 +7,11 @@ import {color} from '../../../theme';
 import firestore from '@react-native-firebase/firestore';
 import {isFormValid} from './validation';
 import {WrapperScreen} from '../../../components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {connect} from 'react-redux';
+import {setUserInfoAction} from '../../../redux/actions';
 
-const SignupVendor = () => {
+const SignupVendor = props => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
@@ -41,22 +44,29 @@ const SignupVendor = () => {
         .createUserWithEmailAndPassword(email, password)
         .then(({user}) => {
           console.log(user);
+          const userdata = {
+            name,
+            email,
+            number,
+            address,
+            maxQueue: 10,
+            startQueue: 0,
+            endQueue: 0,
+            userType: 'vendor',
+          };
           setLoading(false);
           firestore()
             .collection('Vendors')
             .doc(user.uid)
-            .set({
-              name,
-              email,
-              number,
-              address,
-              maxQueue: 10,
-              startQueue: 0,
-              endQueue: 0,
-              userType: 'vendor',
-            })
-            .then(() => {
+            .set(userdata)
+            .then(async () => {
               setLoading(false);
+              try {
+                await AsyncStorage.setItem('user', JSON.stringify(userdata));
+                props.setUserInfoAction(userdata);
+              } catch (e) {
+                console.log(e);
+              }
               console.log('User account created & signed in!');
             });
         })
@@ -187,4 +197,4 @@ const SignupVendor = () => {
   );
 };
 
-export default SignupVendor;
+export default connect(null, {setUserInfoAction})(SignupVendor);

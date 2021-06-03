@@ -15,6 +15,9 @@ import firestore from '@react-native-firebase/firestore';
 import {isFormValid} from './validation';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {WrapperScreen, RadioButton} from '../../../components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {connect} from 'react-redux';
+import {setUserInfoAction} from '../../../redux/actions';
 
 const SignupPeople = () => {
   const [dob, setDob] = useState(new Date());
@@ -33,7 +36,7 @@ const SignupPeople = () => {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState('');
 
-  const SignupUser = () => {
+  const SignupUser = props => {
     const validation = isFormValid(
       name,
       email,
@@ -49,20 +52,27 @@ const SignupPeople = () => {
         .createUserWithEmailAndPassword(email, password)
         .then(({user}) => {
           console.log(user);
+          const userData = {
+            name,
+            email,
+            number,
+            dob,
+            gender: isMale ? 'male' : 'female',
+            userType: 'person',
+          };
           setLoading(false);
           firestore()
             .collection('People')
             .doc(user.uid)
-            .set({
-              name,
-              email,
-              number,
-              dob,
-              gender: isMale ? 'male' : 'female',
-              userType: 'person',
-            })
-            .then(() => {
+            .set(userData)
+            .then(async () => {
               setLoading(false);
+              try {
+                await AsyncStorage.setItem('user', JSON.stringify(userData));
+                props.setUserInfoAction(userData);
+              } catch (e) {
+                console.log(e);
+              }
               console.log('User account created & signed in!');
             });
         })
@@ -211,4 +221,4 @@ const SignupPeople = () => {
   );
 };
 
-export default SignupPeople;
+export default connect(null, {setUserInfoAction})(SignupPeople);

@@ -7,8 +7,11 @@ import {color} from '../../../theme';
 import {isFormValid} from './validation';
 import {WrapperScreen} from '../../../components';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {connect} from 'react-redux';
+import {setUserInfoAction} from '../../../redux/actions';
 
-const Login = () => {
+const Login = props => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
@@ -24,13 +27,21 @@ const Login = () => {
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(async ({user}) => {
-          console.log(user);
           const userInfo = await firestore()
             .collection('People')
             .doc(user.uid)
             .get();
           if (userInfo.exists) {
             console.log(userInfo.data());
+            try {
+              await AsyncStorage.setItem(
+                'user',
+                JSON.stringify(userInfo.data()),
+              );
+              props.setUserInfoAction(userInfo.data());
+            } catch (e) {
+              console.log(e);
+            }
             setLoading(false);
           } else {
             const vendorInfo = await firestore()
@@ -39,6 +50,15 @@ const Login = () => {
               .get();
             if (vendorInfo.exists) {
               console.log(vendorInfo.data());
+              try {
+                await AsyncStorage.setItem(
+                  'user',
+                  JSON.stringify(vendorInfo.data()),
+                );
+                props.setUserInfoAction(vendorInfo.data());
+              } catch (e) {
+                console.log(e);
+              }
               setLoading(false);
             }
           }
@@ -92,4 +112,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default connect(null, {setUserInfoAction})(Login);

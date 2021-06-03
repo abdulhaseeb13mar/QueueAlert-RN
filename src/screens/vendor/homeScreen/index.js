@@ -1,15 +1,15 @@
-import React from 'react'
-import {View, Text} from 'react-native'
+import React from 'react';
+import {View, Text} from 'react-native';
 
 //Styling
-import styles from './style'
+import styles from './style';
 
 const HomePage = () => {
   return (
     <View style={styles.container}>
-      <Text>HomePage Screen</Text>
+      <Text>Vendor HomePage Screen</Text>
     </View>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
