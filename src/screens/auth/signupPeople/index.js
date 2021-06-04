@@ -18,6 +18,8 @@ import {WrapperScreen, RadioButton} from '../../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect} from 'react-redux';
 import {setUserInfoAction} from '../../../redux/actions';
+import {Navigator} from '../../../utils';
+import constants from '../../../theme/constants';
 
 const SignupPeople = () => {
   const [dob, setDob] = useState(new Date());
@@ -129,6 +131,8 @@ const SignupPeople = () => {
     setShowDatePicker(false);
   };
 
+  const goToLogin = () => Navigator.navigate(constants.authScreens.Login);
+
   const getStructuredDate = d =>
     d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
   const toggleDatePicker = () => setShowDatePicker(!showDatePicker);
@@ -137,6 +141,7 @@ const SignupPeople = () => {
   const changeNumber = text => setNumber(text);
   const changePassword = text => setPassword(text);
   const changeConfirmPassword = text => setConfirmPassword(text);
+
   return (
     <WrapperScreen>
       <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
@@ -217,6 +222,12 @@ const SignupPeople = () => {
         ) : (
           <Button title="signup" onPress={SignupUser} />
         )}
+      </View>
+      <View style={styles.signUpTextContainer}>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={goToLogin}>
+          <Text style={styles.signupText}>Login Here</Text>
+        </TouchableOpacity>
       </View>
     </WrapperScreen>
   );

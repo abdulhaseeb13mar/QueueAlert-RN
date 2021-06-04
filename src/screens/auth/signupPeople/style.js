@@ -22,6 +22,15 @@ const styles = StyleSheet.create({
     width: H_W.width * 0.7,
     color: 'black',
   },
+  signUpTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
+  signupText: {
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

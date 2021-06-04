@@ -1,6 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import styles from './style';
 import {color} from '../../../theme';
@@ -10,6 +17,8 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect} from 'react-redux';
 import {setUserInfoAction} from '../../../redux/actions';
+import {Navigator} from '../../../utils';
+import constants from '../../../theme/constants';
 
 const Login = props => {
   const [email, setEmail] = useState('');
@@ -82,6 +91,10 @@ const Login = props => {
 
   const changePassword = text => setPassword(text);
   const changeEmail = text => setEmail(text);
+  const goToSingupPeople = () =>
+    Navigator.navigate(constants.authScreens.SignupPeople);
+  const goToSingupVendor = () =>
+    Navigator.navigate(constants.authScreens.SignupVendor);
 
   return (
     <WrapperScreen>
@@ -107,6 +120,18 @@ const Login = props => {
         ) : (
           <Button title="Login" onPress={Signin} />
         )}
+      </View>
+      <View style={styles.signUpTextContainer}>
+        <Text>Want to Get in Queue? </Text>
+        <TouchableOpacity onPress={goToSingupPeople}>
+          <Text style={styles.signupText}>SignUp Here</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.signUpTextContainer}>
+        <Text>Want to Start a Queue? </Text>
+        <TouchableOpacity onPress={goToSingupVendor}>
+          <Text style={styles.signupText}>SignUp Here</Text>
+        </TouchableOpacity>
       </View>
     </WrapperScreen>
   );

@@ -1,6 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, Button, TextInput, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import styles from './style';
 import {color} from '../../../theme';
@@ -10,6 +17,8 @@ import {WrapperScreen} from '../../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect} from 'react-redux';
 import {setUserInfoAction} from '../../../redux/actions';
+import {Navigator} from '../../../utils';
+import constants from '../../../theme/constants';
 
 const SignupVendor = props => {
   const [name, setName] = useState('');
@@ -130,6 +139,7 @@ const SignupVendor = props => {
     }
   };
 
+  const goToLogin = () => Navigator.navigate(constants.authScreens.Login);
   const changeName = text => setName(text);
   const changeEmail = text => setEmail(text);
   const changeNumber = text => setNumber(text);
@@ -193,6 +203,12 @@ const SignupVendor = props => {
         ) : (
           <Button title="signup" onPress={Signup} />
         )}
+      </View>
+      <View style={styles.signUpTextContainer}>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={goToLogin}>
+          <Text style={styles.signupText}>Login Here</Text>
+        </TouchableOpacity>
       </View>
     </WrapperScreen>
   );
