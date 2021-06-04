@@ -6,6 +6,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  currentNumber: {
+    fontSize: 100,
+  },
+  currentNumText: {
+    fontSize: 23,
+  },
+  nextBackContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 250,
+  },
 });
 
 export default styles;

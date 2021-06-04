@@ -59,6 +59,7 @@ const SignupPeople = () => {
             dob,
             gender: isMale ? 'male' : 'female',
             userType: 'person',
+            uid: user.uid,
           };
           setLoading(false);
           firestore()
