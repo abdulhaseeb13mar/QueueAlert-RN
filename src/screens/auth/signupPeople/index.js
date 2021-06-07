@@ -21,7 +21,7 @@ import {setUserInfoAction} from '../../../redux/actions';
 import {Navigator} from '../../../utils';
 import constants from '../../../theme/constants';
 
-const SignupPeople = () => {
+const SignupPeople = props => {
   const [dob, setDob] = useState(new Date());
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -38,7 +38,7 @@ const SignupPeople = () => {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState('');
 
-  const SignupUser = props => {
+  const SignupUser = () => {
     const validation = isFormValid(
       name,
       email,
@@ -52,7 +52,7 @@ const SignupPeople = () => {
       setLoading(true);
       auth()
         .createUserWithEmailAndPassword(email, password)
-        .then(({user}) => {
+        .then(async ({user}) => {
           console.log(user);
           const userData = {
             name,
@@ -64,14 +64,17 @@ const SignupPeople = () => {
             uid: user.uid,
           };
           setLoading(false);
-          firestore()
-            .collection('People')
+          await firestore()
+            .collection(constants.collections.People)
             .doc(user.uid)
             .set(userData)
             .then(async () => {
               setLoading(false);
               try {
-                await AsyncStorage.setItem('user', JSON.stringify(userData));
+                await AsyncStorage.setItem(
+                  constants.async.user,
+                  JSON.stringify(userData),
+                );
                 props.setUserInfoAction(userData);
               } catch (e) {
                 console.log(e);
@@ -127,7 +130,8 @@ const SignupPeople = () => {
   };
 
   const onDateChange = (event, selectedDate) => {
-    setDob(selectedDate);
+    console.log(selectedDate);
+    selectedDate && setDob(selectedDate);
     setShowDatePicker(false);
   };
 
@@ -185,6 +189,7 @@ const SignupPeople = () => {
             mode="date"
             display="default"
             onChange={onDateChange}
+            onTouchCancel
           />
         )}
         <TextInput

@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/stack';
 
 //Screens
-import {HomeScreen} from '../../../screens/people';
+import {HomeScreen, SingleVendor} from '../../../screens/people';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +23,7 @@ export default function PeopleStack() {
         },
       }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="SingleVendor" component={SingleVendor} />
     </Stack.Navigator>
   );
 }

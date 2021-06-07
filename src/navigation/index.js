@@ -4,6 +4,7 @@ import {Navigator} from '../utils/';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setUserInfoAction} from '../redux/actions';
+import constants from '../theme/constants';
 
 //Stacks
 import AuthStack from './authStack';
@@ -14,15 +15,17 @@ const Routes = props => {
   useEffect(() => {
     getAsyncUserInfo();
   }, []);
+
   const getAsyncUserInfo = async () => {
     try {
-      const userInfo = await AsyncStorage.getItem('user');
+      const userInfo = await AsyncStorage.getItem(constants.async.user);
       let data = userInfo != null ? JSON.parse(userInfo) : {userType: 'none'};
       props.setUserInfoAction(data);
     } catch (e) {
       console.log(e);
     }
   };
+
   return (
     <NavigationContainer
       ref={navigatorRef => Navigator.setTopLevelNavigator(navigatorRef)}>
@@ -34,8 +37,7 @@ const Routes = props => {
         ) : (
           <AuthStack />
         )
-      ) : // <AuthStack />
-      null}
+      ) : null}
     </NavigationContainer>
   );
 };

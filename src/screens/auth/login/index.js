@@ -37,14 +37,14 @@ const Login = props => {
         .signInWithEmailAndPassword(email, password)
         .then(async ({user}) => {
           const userInfo = await firestore()
-            .collection('People')
+            .collection(constants.collections.People)
             .doc(user.uid)
             .get();
           if (userInfo.exists) {
             console.log(userInfo.data());
             try {
               await AsyncStorage.setItem(
-                'user',
+                constants.async.user,
                 JSON.stringify(userInfo.data()),
               );
               props.setUserInfoAction(userInfo.data());
@@ -54,14 +54,14 @@ const Login = props => {
             setLoading(false);
           } else {
             const vendorInfo = await firestore()
-              .collection('Vendors')
+              .collection(constants.collections.Vendors)
               .doc(user.uid)
               .get();
             if (vendorInfo.exists) {
               console.log(vendorInfo.data());
               try {
                 await AsyncStorage.setItem(
-                  'user',
+                  constants.async.user,
                   JSON.stringify(vendorInfo.data()),
                 );
                 props.setUserInfoAction(vendorInfo.data());

@@ -5,6 +5,15 @@ const Constants = {
       screen: '',
     },
   ],
+  async: {
+    user: 'user',
+    currentNum: 'currentNum',
+  },
+  collections: {
+    People: 'People',
+    Queues: 'Queues',
+    Vendors: 'Vendors',
+  },
   actionTypes: {
     SET_USER_INFO: 'SET_USER_INFO',
     INCREMENT_NUMBER: 'INCREMENT_NUMBER',

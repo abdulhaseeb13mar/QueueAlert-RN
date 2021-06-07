@@ -66,13 +66,16 @@ const SignupVendor = props => {
           };
           setLoading(false);
           firestore()
-            .collection('Vendors')
+            .collection(constants.collections.Vendors)
             .doc(user.uid)
             .set(userdata)
             .then(async () => {
               setLoading(false);
               try {
-                await AsyncStorage.setItem('user', JSON.stringify(userdata));
+                await AsyncStorage.setItem(
+                  constants.async.user,
+                  JSON.stringify(userdata),
+                );
                 props.setUserInfoAction(userdata);
               } catch (e) {
                 console.log(e);
