@@ -14,9 +14,9 @@ const SingleVendor = props => {
   useEffect(() => {
     const subscriber = firestore()
       .collection(constants.collections.Queues)
-      .doc('ka8ivUqheDdJ1MEWvuPTKMIw8BQ2')
+      .doc('JCMrwhxxa9a3TFt5LH2EUcWPBjp1')
       .onSnapshot(documentSnapshot => {
-        console.log('Current Number: ', documentSnapshot.data().currentNum);
+        console.log('Current Number: ', documentSnapshot.data());
         setCurrentNumber(documentSnapshot.data().currentNum);
       });
     return () => subscriber();

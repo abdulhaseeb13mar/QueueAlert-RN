@@ -2,7 +2,7 @@
 import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {colors} from './TbColor';
-import {H_W} from './TbResponsive';
+import {width, height} from './Responsive';
 import {Badge} from 'react-native-elements';
 import {connect} from 'react-redux';
 
@@ -45,7 +45,7 @@ function MyHeader({
           <TouchableOpacity onPress={leftIconAction} style={styles.IconWrap}>
             <LeftIconLibrary
               name={leftIconName}
-              size={H_W.width * 0.075}
+              size={width * 0.075}
               color={leftIconColor ? leftIconColor : colors.primary}
               style={leftIconStyle ? leftIconStyle : {}}
             />
@@ -73,7 +73,7 @@ function MyHeader({
           <TouchableOpacity onPress={rightIconAction} style={styles.IconWrap}>
             <RightIconLibrary
               name={rightIconName}
-              size={H_W.width * 0.075}
+              size={width * 0.075}
               color={rightIconColor ? rightIconColor : colors.primary}
               style={rightIconStyle ? rightIconStyle : {}}
             />
@@ -116,25 +116,25 @@ const styles = StyleSheet.create({
   HeaderText: {
     fontWeight: 'bold',
     color: colors.primary,
-    fontSize: H_W.width * 0.08,
+    fontSize: width * 0.08,
   },
   HeaderBarInnerWrapper: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: H_W.width * 0.93,
+    width: width * 0.93,
   },
   HeaderBarWrapper: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: H_W.height * 0.018,
+    marginVertical: height * 0.018,
   },
 });
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   totalItems: state.DzCartReducer.totalItems,
 });
 

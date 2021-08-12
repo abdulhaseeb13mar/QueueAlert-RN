@@ -12,9 +12,10 @@ import {SignupPeople, SignupVendor, Login} from '../../screens/auth';
 const Stack = createStackNavigator();
 
 export default function AuthStack() {
+  const {authScreens} = constants;
   return (
     <Stack.Navigator
-      initialRouteName={constants.authScreens.Login}
+      initialRouteName={authScreens.Login}
       screenOptions={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -23,15 +24,9 @@ export default function AuthStack() {
           close: TransitionSpecs.TransitionIOSSpec,
         },
       }}>
-      <Stack.Screen name={constants.authScreens.Login} component={Login} />
-      <Stack.Screen
-        name={constants.authScreens.SignupPeople}
-        component={SignupPeople}
-      />
-      <Stack.Screen
-        name={constants.authScreens.SignupVendor}
-        component={SignupVendor}
-      />
+      <Stack.Screen name={authScreens.Login} component={Login} />
+      <Stack.Screen name={authScreens.SignupPeople} component={SignupPeople} />
+      <Stack.Screen name={authScreens.SignupVendor} component={SignupVendor} />
     </Stack.Navigator>
   );
 }

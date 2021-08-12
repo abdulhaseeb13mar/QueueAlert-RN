@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {H_W} from './TbResponsive';
+import {height} from './Responsive';
 import {colors} from './TbColor';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export default function SearchBar({editable, changeSearchText}) {
   const [isFocused, setisFocused] = useState(false);
   const insets = useSafeAreaInsets();
-  const HEIGHT = H_W.height - (insets.bottom + insets.top);
-  const ChangeFocus = (bool) => {
+  const HEIGHT = height - (insets.bottom + insets.top);
+  const ChangeFocus = bool => {
     setisFocused(bool);
   };
 
-  const onChangeText = (t) => changeSearchText(t);
+  const onChangeText = t => changeSearchText(t);
 
   return (
     <View style={{...styles.SB_Wrapper, height: HEIGHT * 0.065}}>

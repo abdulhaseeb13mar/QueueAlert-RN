@@ -51,7 +51,7 @@ const Login = props => {
             } catch (e) {
               console.log(e);
             }
-            setLoading(false);
+            // setLoading(false);
           } else {
             const vendorInfo = await firestore()
               .collection(constants.collections.Vendors)
@@ -68,7 +68,7 @@ const Login = props => {
               } catch (e) {
                 console.log(e);
               }
-              setLoading(false);
+              // setLoading(false);
             }
           }
         })

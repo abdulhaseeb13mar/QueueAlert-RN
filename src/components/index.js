@@ -1,9 +1,21 @@
 // import Header from './Header';
 // import SearchBar from './SearchBar';
 import WrapperScreen from './WrapperScreen';
-import {H_W} from './Responsive';
+import {width, height, screenHorizontalPadding} from './Responsive';
 import RadioButton from './RadioButton';
 import FlatList from './FlatList';
 import VendorTile from './VendorTile';
+import InnerWrapper from './InnerWrapper';
+import HeaderMenu from './HeaderMenu';
 
-export {WrapperScreen, H_W, RadioButton, FlatList, VendorTile};
+export {
+  WrapperScreen,
+  width,
+  height,
+  screenHorizontalPadding,
+  RadioButton,
+  FlatList,
+  VendorTile,
+  InnerWrapper,
+  HeaderMenu,
+};

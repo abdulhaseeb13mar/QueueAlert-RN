@@ -1,13 +1,8 @@
 const Constants = {
-  menu: [
-    {
-      name: '',
-      screen: '',
-    },
-  ],
   async: {
     user: 'user',
     currentNum: 'currentNum',
+    vendorsList: 'vendorsList',
   },
   collections: {
     People: 'People',
@@ -24,6 +19,10 @@ const Constants = {
     Login: 'Login',
     SignupVendor: 'SignupVendor',
     SignupPeople: 'SignupPeople',
+  },
+  appScreens: {
+    Home: 'Home',
+    SingleVendor: 'SingleVendor',
   },
 };
 

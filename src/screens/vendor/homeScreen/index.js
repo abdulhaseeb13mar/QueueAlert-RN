@@ -3,21 +3,23 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Button, ActivityIndicator} from 'react-native';
 import {WrapperScreen} from '../../../components';
 import {connect} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from './style';
+import constants from '../../../theme/constants';
 import {
   incrementNumberAction,
   setCurrentNumberAction,
   decrementNumberAction,
   setUserInfoAction,
 } from '../../../redux/actions';
-import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from './style';
-import constants from '../../../theme/constants';
 
 const HomePage = props => {
   useEffect(() => {
     getCurrentNum();
   }, []);
+
+  const {async, collections} = constants;
 
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -27,12 +29,12 @@ const HomePage = props => {
   const endQueue = async () => {
     setLoading4(true);
     await firestore()
-      .collection(constants.collections.Queues)
+      .collection(collections.Queues)
       .doc(props.user.uid)
       .delete()
       .then(async () => {
         try {
-          await AsyncStorage.removeItem();
+          await AsyncStorage.removeItem(async.currentNum);
           props.setCurrentNumberAction(0);
           setLoading4(false);
         } catch (e) {
@@ -45,7 +47,7 @@ const HomePage = props => {
   const decrementQueue = async () => {
     setLoading3(true);
     await firestore()
-      .collection(constants.collections.Queues)
+      .collection(collections.Queues)
       .doc(props.user.uid)
       .update({currentNum: props.currentNumber - 1})
       .then(async () => {
@@ -58,13 +60,13 @@ const HomePage = props => {
 
   const getCurrentNum = async () => {
     try {
-      const value = await AsyncStorage.getItem(constants.async.currentNum);
+      const value = await AsyncStorage.getItem(async.currentNum);
       if (value !== null) {
         props.setCurrentNumberAction(parseInt(value, 10));
         console.log(value);
       }
       await firestore()
-        .collection(constants.collections.Queues)
+        .collection(collections.Queues)
         .doc(props.user.uid)
         .get()
         .then(async doc => {
@@ -95,7 +97,7 @@ const HomePage = props => {
 
   const saveCurrentNum = async num => {
     try {
-      await AsyncStorage.setItem(constants.async.currentNum, num.toString());
+      await AsyncStorage.setItem(async.currentNum, num.toString());
     } catch (e) {
       // saving error
     }
@@ -104,7 +106,7 @@ const HomePage = props => {
   const incrementQueue = async () => {
     setLoading2(true);
     await firestore()
-      .collection(constants.collections.Queues)
+      .collection(collections.Queues)
       .doc(props.user.uid)
       .update({currentNum: props.currentNumber + 1})
       .then(async () => {
@@ -118,9 +120,12 @@ const HomePage = props => {
   const startQueue = async () => {
     setLoading1(true);
     await firestore()
-      .collection(constants.collections.Queues)
+      .collection(collections.Queues)
       .doc(props.user.uid)
-      .set({currentNum: 1})
+      .set({
+        currentNum: 1,
+        vendor: firestore().doc(`Vendors/${props.user.uid}`),
+      })
       .then(async res => {
         props.incrementNumberAction(props.currentNumber);
         await saveCurrentNum(props.currentNumber + 1);
@@ -130,7 +135,7 @@ const HomePage = props => {
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem(constants.async.user);
+    await AsyncStorage.removeItem(async.user);
     props.setUserInfoAction({userType: 'none'});
   };
   return (

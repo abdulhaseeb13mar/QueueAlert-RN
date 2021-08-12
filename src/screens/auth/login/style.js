@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {H_W} from '../../../components';
+import {width} from '../../../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderWidth: 1,
-    width: H_W.width * 0.7,
+    width: width * 0.7,
     color: 'black',
   },
   signUpTextContainer: {

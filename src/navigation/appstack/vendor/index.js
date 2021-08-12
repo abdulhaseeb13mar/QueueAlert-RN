@@ -4,6 +4,7 @@ import {
   CardStyleInterpolators,
   TransitionSpecs,
 } from '@react-navigation/stack';
+import constants from '../../../theme/constants';
 
 //Screens
 import {HomeScreen} from '../../../screens/vendor';
@@ -11,9 +12,10 @@ import {HomeScreen} from '../../../screens/vendor';
 const Stack = createStackNavigator();
 
 export default function VendorStack() {
+  const {appScreens} = constants;
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName={appScreens.Home}
       screenOptions={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -22,7 +24,7 @@ export default function VendorStack() {
           close: TransitionSpecs.TransitionIOSSpec,
         },
       }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name={appScreens.Home} component={HomeScreen} />
     </Stack.Navigator>
   );
 }
