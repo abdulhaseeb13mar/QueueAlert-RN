@@ -14,6 +14,8 @@ const Constants = {
     INCREMENT_NUMBER: 'INCREMENT_NUMBER',
     DECREMENT_NUMBER: 'DECREMENT_NUMBER',
     SET_CURRENT_NUMBER: 'SET_CURRENT_NUMBER',
+    SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',
+    SET_HEIGHT: 'SET_HEIGHT',
   },
   authScreens: {
     Login: 'Login',
@@ -23,6 +25,7 @@ const Constants = {
   appScreens: {
     Home: 'Home',
     SingleVendor: 'SingleVendor',
+    Profile: 'Profile',
   },
 };
 

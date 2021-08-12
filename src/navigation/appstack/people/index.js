@@ -5,15 +5,14 @@ import {
   TransitionSpecs,
 } from '@react-navigation/stack';
 import constants from '../../../theme/constants';
-import {View, Text} from 'react-native';
 import {WrapperScreen, HeaderMenu} from '../../../components';
 
 //Screens
-import {HomeScreen, SingleVendor} from '../../../screens/people';
+import {HomeScreen, SingleVendor, Profile} from '../../../screens/people';
 
 const Stack = createStackNavigator();
 
-export default function PeopleStack() {
+export default function PeopleStack(props) {
   const {appScreens} = constants;
   return (
     <WrapperScreen>
@@ -30,6 +29,7 @@ export default function PeopleStack() {
         }}>
         <Stack.Screen name={appScreens.Home} component={HomeScreen} />
         <Stack.Screen name={appScreens.SingleVendor} component={SingleVendor} />
+        <Stack.Screen name={appScreens.Profile} component={Profile} />
       </Stack.Navigator>
     </WrapperScreen>
   );

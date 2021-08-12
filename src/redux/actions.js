@@ -1,9 +1,10 @@
 import constants from '../theme/constants';
+const {actionTypes} = constants;
 
 export const setUserInfoAction = userInfo => {
   return async dispatch => {
     dispatch({
-      type: constants.actionTypes.SET_USER_INFO,
+      type: actionTypes.SET_USER_INFO,
       payload: userInfo,
     });
   };
@@ -12,7 +13,7 @@ export const setUserInfoAction = userInfo => {
 export const incrementNumberAction = num => {
   return async dispatch => {
     dispatch({
-      type: constants.actionTypes.INCREMENT_NUMBER,
+      type: actionTypes.INCREMENT_NUMBER,
       payload: num,
     });
   };
@@ -21,7 +22,7 @@ export const incrementNumberAction = num => {
 export const decrementNumberAction = num => {
   return async dispatch => {
     dispatch({
-      type: constants.actionTypes.DECREMENT_NUMBER,
+      type: actionTypes.DECREMENT_NUMBER,
       payload: num,
     });
   };
@@ -30,8 +31,26 @@ export const decrementNumberAction = num => {
 export const setCurrentNumberAction = num => {
   return async dispatch => {
     dispatch({
-      type: constants.actionTypes.SET_CURRENT_NUMBER,
+      type: actionTypes.SET_CURRENT_NUMBER,
       payload: num,
+    });
+  };
+};
+
+export const setCurrentScreen = screen => {
+  return async dispatch => {
+    dispatch({
+      type: actionTypes.SET_CURRENT_SCREEN,
+      payload: screen,
+    });
+  };
+};
+
+export const setHeight = height => {
+  return async dispatch => {
+    dispatch({
+      type: actionTypes.SET_HEIGHT,
+      payload: height,
     });
   };
 };

@@ -7,7 +7,6 @@ const VendorTile = props => {
 
   return (
     <View>
-      {console.log(props)}
       <Text>{props.item.name}</Text>
     </View>
   );

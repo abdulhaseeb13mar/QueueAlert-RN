@@ -1,22 +1,28 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View, StatusBar} from 'react-native';
-import {
-  SafeAreaInsetsContext,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {SafeAreaInsetsContext} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {withTheme} from 'react-native-paper';
 
 function WrapperScreen(props) {
   const {
     top,
     bottom,
-    statusBar = 'white',
-    barStyle = 'dark-content',
+    statusBar = props.theme.colors.background,
+    barStyle = 'light-content',
     statusColor,
+    theme,
+    backgroundColor = theme.colors.background,
+    style,
   } = props;
   const insets = useSafeAreaInsets();
   return (
-    <View style={{flex: 1, backgroundColor: statusBar}}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: statusBar,
+      }}>
       <View
         style={{
           height: insets.top,
@@ -30,9 +36,9 @@ function WrapperScreen(props) {
             style={{
               flex: 1,
               // marginTop: top === 0 ? top : insets.top,
-              paddingBottom: bottom === 0 ? bottom : insets.bottom,
-              backgroundColor: 'white',
-              ...props.style,
+              marginBottom: bottom === 0 ? bottom : insets.bottom,
+              backgroundColor: backgroundColor,
+              ...style,
             }}>
             {props.children}
           </View>
@@ -42,4 +48,4 @@ function WrapperScreen(props) {
   );
 }
 
-export default WrapperScreen;
+export default withTheme(WrapperScreen);
