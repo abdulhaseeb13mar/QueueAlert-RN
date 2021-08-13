@@ -2,24 +2,23 @@
 import React from 'react';
 import {View, FlatList} from 'react-native';
 
-function Looping(props) {
-  const {
-    data,
-    renderItem,
-    style,
-    containerStyle,
-    horizontal = true,
-    ...rest
-  } = props;
+const CustomFlatlist = ({
+  data,
+  renderItem,
+  style,
+  containerStyle,
+  horizontal = false,
+  ListFooterComponent,
+  ListHeaderComponent,
+  numColumns = 1,
+  ...rest
+}) => {
   return (
     <View style={{flex: 1}}>
       <FlatList
-        ListFooterComponent={
-          props.ListFooterComponent && props.ListFooterComponent
-        }
-        ListHeaderComponent={
-          props.ListHeaderComponent && props.ListHeaderComponent
-        }
+        numColumns={numColumns}
+        ListFooterComponent={ListFooterComponent && ListFooterComponent}
+        ListHeaderComponent={ListHeaderComponent && ListHeaderComponent}
         bounces={false}
         data={data}
         horizontal={horizontal}
@@ -31,10 +30,11 @@ function Looping(props) {
         keyExtractor={() => Math.random().toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </View>
   );
-}
+};
 
-export default Looping;
+export default CustomFlatlist;

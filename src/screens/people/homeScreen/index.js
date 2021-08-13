@@ -1,22 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Button} from 'react-native-paper';
 import styles from './style';
 import firestore from '@react-native-firebase/firestore';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect} from 'react-redux';
-import {setUserInfoAction} from '../../../redux/actions';
+import {setUserInfoAction, setCurrentScreen} from '../../../redux/actions';
 import constants from '../../../theme/constants';
 import {FlatList, InnerWrapper, VendorTile} from '../../../components';
 import {withTheme} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import navigator from '../../../utils/navigator';
 
-const HomePage = ({theme, height}) => {
+const HomePage = ({theme, height, ...props}) => {
   useEffect(() => {
     getAllVendors();
   }, []);
 
   const {colors} = theme;
+  const StyleProp = {colors, height};
 
   const [allVendors, setAllVendors] = useState([]);
 
@@ -46,17 +48,23 @@ const HomePage = ({theme, height}) => {
   //   }
   // };
 
-  // const logout = async () => {
-  //   await AsyncStorage.removeItem(constants.async.user);
-  //   props.setUserInfoAction({userType: 'none'});
-  // };
+  const handleCardPress = item => {
+    navigator.navigate(constants.appScreens.SingleVendor, item);
+    props.setCurrentScreen(constants.appScreens.SingleVendor);
+  };
+
+  const logout = async () => {
+    await AsyncStorage.removeItem(constants.async.user);
+    props.setUserInfoAction({userType: 'none'});
+  };
 
   return (
     <InnerWrapper>
-      <View style={styles(colors, height).searchView}>
+      <Button onPress={logout}>logout</Button>
+      <View style={styles(StyleProp).searchView}>
         <TextInput
           mode="flat"
-          style={styles(colors, height).searchInput}
+          style={styles(StyleProp).searchInput}
           left={
             <TextInput.Icon
               name={() => (
@@ -79,11 +87,17 @@ const HomePage = ({theme, height}) => {
         />
       </View>
       {allVendors.length > 0 && (
-        <FlatList
-          data={allVendors}
-          renderItem={({item}) => <VendorTile item={item} />}
-          horizontal={false}
-        />
+        <View style={styles(StyleProp).listContainer}>
+          <FlatList
+            data={allVendors}
+            renderItem={({item}) => (
+              <VendorTile item={item} onPress={handleCardPress} />
+            )}
+            horizontal={false}
+            numColumns={2}
+            style={styles(StyleProp).flatlistStyle}
+          />
+        </View>
       )}
     </InnerWrapper>
   );
@@ -93,6 +107,6 @@ const mapStateToProps = state => ({
   height: state.HeightReducer,
 });
 
-export default connect(mapStateToProps, {setUserInfoAction})(
+export default connect(mapStateToProps, {setUserInfoAction, setCurrentScreen})(
   withTheme(HomePage),
 );

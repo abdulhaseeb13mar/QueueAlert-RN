@@ -1,42 +1,71 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button} from 'react-native';
-import styles from './style';
-import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Text, BackHandler} from 'react-native';
 import {connect} from 'react-redux';
-import {setUserInfoAction} from '../../../redux/actions';
+// import styles from './style';
+import firestore from '@react-native-firebase/firestore';
+import {setUserInfoAction, setCurrentScreen} from '../../../redux/actions';
+import {withTheme} from 'react-native-paper';
 import constants from '../../../theme/constants';
+import {InnerWrapper} from '../../../components';
+import navigator from '../../../utils/navigator';
 
-const SingleVendor = props => {
+const SingleVendor = ({theme, height, ...props}) => {
   const [currentNumber, setCurrentNumber] = useState(0);
+
+  // const StyleProp = {colors: theme.colors, height};
+
+  const singleVendor = props.route.params;
 
   useEffect(() => {
     const subscriber = firestore()
       .collection(constants.collections.Queues)
-      .doc('JCMrwhxxa9a3TFt5LH2EUcWPBjp1')
+      .doc(singleVendor.uid)
       .onSnapshot(documentSnapshot => {
-        console.log('Current Number: ', documentSnapshot.data());
-        setCurrentNumber(documentSnapshot.data().currentNum);
+        console.log('Current Number: ', documentSnapshot);
+        setCurrentNumber(
+          documentSnapshot.data() ? documentSnapshot.data().currentNum : null,
+        );
       });
-    return () => subscriber();
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        navigator.navigate(constants.appScreens.Home);
+        props.setCurrentScreen(constants.appScreens.Home);
+        return true;
+      },
+    );
+    return () => {
+      subscriber();
+      backHandler.remove();
+    };
   }, []);
 
-  const logout = async () => {
-    await AsyncStorage.removeItem(constants.async.user);
-    props.setUserInfoAction({userType: 'none'});
-  };
-
   return (
-    <View style={styles.container}>
-      <Text>Single Vendor Screen</Text>
-      <Text>ABDUL HASEEB QUEUE ONGOING...</Text>
-      <Text style={{fontSize: 100}}>
-        {currentNumber < 10 ? `0${currentNumber}` : currentNumber}
+    <InnerWrapper>
+      {currentNumber ? (
+        <Text style={{marginTop: 100, color: 'black', fontSize: 20}}>
+          {singleVendor.name} QUEUE ONGOING...
+        </Text>
+      ) : (
+        <Text style={{marginTop: 100, color: '#d0d0d0', fontSize: 20}}>
+          {singleVendor.name} queue is not available
+        </Text>
+      )}
+      <Text
+        style={{fontSize: 100, color: !currentNumber ? '#d0d0d0' : 'black'}}>
+        {!currentNumber
+          ? '00'
+          : currentNumber < 10
+          ? `0${currentNumber}`
+          : currentNumber}
       </Text>
-      <Button title="logout" onPress={logout} />
-    </View>
+    </InnerWrapper>
   );
 };
-
-export default connect(null, {setUserInfoAction})(SingleVendor);
+const mapStateToProps = state => ({
+  height: state.HeightReducer,
+});
+export default connect(mapStateToProps, {setUserInfoAction, setCurrentScreen})(
+  withTheme(SingleVendor),
+);

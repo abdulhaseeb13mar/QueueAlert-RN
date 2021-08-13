@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-const styles = (colors, height) =>
+const styles = ({colors, height}) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -21,6 +21,14 @@ const styles = (colors, height) =>
       height: height * 0.075,
       backgroundColor: 'transparent',
     },
+    listContainer: {
+      width: '100%',
+      flex: 1,
+      marginTop: height * 0.02,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    flatlistStyle: {width: '100%'},
   });
 
 export default styles;
