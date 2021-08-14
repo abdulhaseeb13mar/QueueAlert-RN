@@ -5,7 +5,7 @@ import {
   TransitionSpecs,
 } from '@react-navigation/stack';
 import constants from '../../../theme/constants';
-import {WrapperScreen, HeaderMenu} from '../../../components';
+import {WrapperScreen, HeaderMenuPeople} from '../../../components';
 
 //Screens
 import {HomeScreen, SingleVendor, Profile} from '../../../screens/people';
@@ -16,7 +16,7 @@ export default function PeopleStack(props) {
   const {appScreens} = constants;
   return (
     <WrapperScreen>
-      <HeaderMenu />
+      <HeaderMenuPeople />
       <Stack.Navigator
         initialRouteName={appScreens.Home}
         screenOptions={{

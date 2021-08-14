@@ -6,7 +6,9 @@ import RadioButton from './RadioButton';
 import FlatList from './FlatList';
 import VendorTile from './VendorTile';
 import InnerWrapper from './InnerWrapper';
-import HeaderMenu from './HeaderMenu';
+import HeaderMenuPeople from './HeaderMenuPeople';
+import HeaderMenuVendor from './HeaderMenuVendor';
+import NumberTile from './NumberTile';
 
 export {
   WrapperScreen,
@@ -17,5 +19,7 @@ export {
   FlatList,
   VendorTile,
   InnerWrapper,
-  HeaderMenu,
+  HeaderMenuPeople,
+  HeaderMenuVendor,
+  NumberTile,
 };

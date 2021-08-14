@@ -1,7 +1,6 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {width, height, screenHorizontalPadding} from './Responsive';
+import {width} from './Responsive';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import navigator from '../utils/navigator';
 import constants from '../theme/constants';
@@ -11,16 +10,16 @@ import {setCurrentScreen} from '../redux/actions';
 const HeaderMenu = props => {
   const {appScreens} = constants;
 
-  const handleNavigation = (screen, tab) => {
+  const handleNavigation = screen => {
     navigator.navigate(screen);
     props.setCurrentScreen(screen);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 28, fontWeight: 'bold'}}>Q Alert</Text>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity onPress={() => handleNavigation(appScreens.Home, 0)}>
+      <Text style={styles.appName}>Q Alert</Text>
+      <View style={styles.iconsContainer}>
+        <TouchableOpacity onPress={() => handleNavigation(appScreens.Home)}>
           <Ionicons
             name={`ios-home${
               props.currentScreen === appScreens.Home ? '' : '-outline'
@@ -29,7 +28,15 @@ const HeaderMenu = props => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => handleNavigation(appScreens.Profile, 1)}>
+          onPress={() => handleNavigation(appScreens.QueueList)}>
+          <Ionicons
+            name={`ios-list-circle${
+              props.currentScreen === appScreens.QueueList ? '' : '-outline'
+            }`}
+            size={25}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleNavigation(appScreens.Profile)}>
           <Ionicons
             name={`ios-person${
               props.currentScreen === appScreens.Profile ? '' : '-outline'
@@ -43,6 +50,7 @@ const HeaderMenu = props => {
 };
 
 const styles = StyleSheet.create({
+  iconsContainer: {flexDirection: 'row'},
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,6 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     elevation: 5,
   },
+  appName: {fontSize: 28, fontWeight: 'bold'},
 });
 
 const mapStateToProps = state => ({

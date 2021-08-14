@@ -54,3 +54,12 @@ export const setHeight = height => {
     });
   };
 };
+
+export const setQueue = queue => {
+  return async dispatch => {
+    dispatch({
+      type: actionTypes.SET_QUEUE,
+      payload: queue,
+    });
+  };
+};

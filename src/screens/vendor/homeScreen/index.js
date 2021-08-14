@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {View, Text, Button, ActivityIndicator} from 'react-native';
-import {WrapperScreen} from '../../../components';
+import {InnerWrapper} from '../../../components';
 import {connect} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,14 +12,25 @@ import {
   setCurrentNumberAction,
   decrementNumberAction,
   setUserInfoAction,
+  setQueue,
 } from '../../../redux/actions';
 
 const HomePage = props => {
+  const {async, collections} = constants;
+
+  const VendorRef = firestore()
+    .collection(collections.Queues)
+    .doc(props.user.uid);
+
+  const singleQueueRef = VendorRef.collection(collections.Queue);
+
   useEffect(() => {
     getCurrentNum();
+    const subscriber = singleQueueRef.onSnapshot(documentSnapshot =>
+      props.setQueue(documentSnapshot.docs.map(doc => doc.data())),
+    );
+    return () => subscriber();
   }, []);
-
-  const {async, collections} = constants;
 
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -28,10 +39,7 @@ const HomePage = props => {
 
   const endQueue = async () => {
     setLoading4(true);
-    await firestore()
-      .collection(collections.Queues)
-      .doc(props.user.uid)
-      .delete()
+    await VendorRef.delete()
       .then(async () => {
         try {
           await AsyncStorage.removeItem(async.currentNum);
@@ -46,10 +54,7 @@ const HomePage = props => {
 
   const decrementQueue = async () => {
     setLoading3(true);
-    await firestore()
-      .collection(collections.Queues)
-      .doc(props.user.uid)
-      .update({currentNum: props.currentNumber - 1})
+    await VendorRef.update({currentNum: props.currentNumber - 1})
       .then(async () => {
         props.decrementNumberAction(props.currentNumber);
         saveCurrentNum(props.currentNumber - 1);
@@ -65,10 +70,7 @@ const HomePage = props => {
         props.setCurrentNumberAction(parseInt(value, 10));
         console.log(value);
       }
-      await firestore()
-        .collection(collections.Queues)
-        .doc(props.user.uid)
-        .get()
+      await VendorRef.get()
         .then(async doc => {
           if (
             doc.exists &&
@@ -105,10 +107,7 @@ const HomePage = props => {
 
   const incrementQueue = async () => {
     setLoading2(true);
-    await firestore()
-      .collection(collections.Queues)
-      .doc(props.user.uid)
-      .update({currentNum: props.currentNumber + 1})
+    await VendorRef.update({currentNum: props.currentNumber + 1})
       .then(async () => {
         props.incrementNumberAction(props.currentNumber);
         saveCurrentNum(props.currentNumber + 1);
@@ -119,13 +118,10 @@ const HomePage = props => {
 
   const startQueue = async () => {
     setLoading1(true);
-    await firestore()
-      .collection(collections.Queues)
-      .doc(props.user.uid)
-      .set({
-        currentNum: 1,
-        vendor: firestore().doc(`Vendors/${props.user.uid}`),
-      })
+    await VendorRef.set({
+      currentNum: 1,
+      vendor: firestore().doc(`Vendors/${props.user.uid}`),
+    })
       .then(async res => {
         props.incrementNumberAction(props.currentNumber);
         await saveCurrentNum(props.currentNumber + 1);
@@ -139,7 +135,7 @@ const HomePage = props => {
     props.setUserInfoAction({userType: 'none'});
   };
   return (
-    <WrapperScreen>
+    <InnerWrapper>
       <Text style={{textAlign: 'center'}}>Vendor Home Screen</Text>
       <View style={styles.container}>
         <Text style={styles.currentNumText}>CURRENT NUMBER</Text>
@@ -192,7 +188,7 @@ const HomePage = props => {
         </View>
         <Button title="logout" onPress={logout} />
       </View>
-    </WrapperScreen>
+    </InnerWrapper>
   );
 };
 
@@ -206,4 +202,5 @@ export default connect(mapStateToProps, {
   setCurrentNumberAction,
   decrementNumberAction,
   setUserInfoAction,
+  setQueue,
 })(HomePage);

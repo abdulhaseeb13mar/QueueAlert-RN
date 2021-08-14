@@ -7,6 +7,7 @@ const Constants = {
   collections: {
     People: 'People',
     Queues: 'Queues',
+    Queue: 'Queue',
     Vendors: 'Vendors',
   },
   actionTypes: {
@@ -16,6 +17,7 @@ const Constants = {
     SET_CURRENT_NUMBER: 'SET_CURRENT_NUMBER',
     SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',
     SET_HEIGHT: 'SET_HEIGHT',
+    SET_QUEUE: 'SET_QUEUE',
   },
   authScreens: {
     Login: 'Login',
@@ -26,6 +28,7 @@ const Constants = {
     Home: 'Home',
     SingleVendor: 'SingleVendor',
     Profile: 'Profile',
+    QueueList: 'QueueList',
   },
 };
 

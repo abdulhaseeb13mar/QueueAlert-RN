@@ -30,7 +30,6 @@ const HomePage = ({theme, height, ...props}) => {
       .get()
       .then(collection => {
         allVends = collection.docs.map(doc => doc.data());
-        console.log(allVends);
         setAllVendors(allVends);
       })
       .catch(e => console.log(e));

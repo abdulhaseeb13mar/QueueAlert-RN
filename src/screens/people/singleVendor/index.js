@@ -12,6 +12,9 @@ import navigator from '../../../utils/navigator';
 
 const SingleVendor = ({theme, height, ...props}) => {
   const [currentNumber, setCurrentNumber] = useState(0);
+  const [allQueue, setAllQueue] = useState([]);
+
+  const {collections, appScreens} = constants;
 
   // const StyleProp = {colors: theme.colors, height};
 
@@ -19,19 +22,19 @@ const SingleVendor = ({theme, height, ...props}) => {
 
   useEffect(() => {
     const subscriber = firestore()
-      .collection(constants.collections.Queues)
+      .collection(collections.Queues)
       .doc(singleVendor.uid)
       .onSnapshot(documentSnapshot => {
-        console.log('Current Number: ', documentSnapshot);
         setCurrentNumber(
           documentSnapshot.data() ? documentSnapshot.data().currentNum : null,
         );
       });
+    getQueueOfVendor();
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        navigator.navigate(constants.appScreens.Home);
-        props.setCurrentScreen(constants.appScreens.Home);
+        navigator.navigate(appScreens.Home);
+        props.setCurrentScreen(appScreens.Home);
         return true;
       },
     );
@@ -41,8 +44,21 @@ const SingleVendor = ({theme, height, ...props}) => {
     };
   }, []);
 
+  const getQueueOfVendor = async () => {
+    await firestore()
+      .collection(collections.Queues)
+      .doc(singleVendor.uid)
+      .collection(collections.Queue)
+      .get()
+      .then(collection => {
+        setAllQueue(collection.docs.map(doc => doc.data()));
+      })
+      .catch(e => console.log(e));
+  };
+
   return (
     <InnerWrapper>
+      {console.log('---------', allQueue)}
       {currentNumber ? (
         <Text style={{marginTop: 100, color: 'black', fontSize: 20}}>
           {singleVendor.name} QUEUE ONGOING...

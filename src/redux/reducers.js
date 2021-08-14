@@ -8,6 +8,7 @@ const userInfo = null;
 const currentNumber = 0;
 const currentScreen = 'Home';
 const height = InitalHeight;
+const queue = [];
 
 const userReducer = (state = userInfo, action) => {
   switch (action.type) {
@@ -65,9 +66,22 @@ const NummberReducer = (state = currentNumber, action) => {
   return state;
 };
 
+const QueueReducer = (state = queue, action) => {
+  switch (action.type) {
+    case actionTypes.SET_QUEUE:
+      state = [...action.payload];
+      return state;
+
+    default:
+      break;
+  }
+  return state;
+};
+
 export default combineReducers({
   userReducer,
   NummberReducer,
   ScreenReducer,
   HeightReducer,
+  QueueReducer,
 });
