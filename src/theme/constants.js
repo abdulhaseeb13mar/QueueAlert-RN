@@ -29,6 +29,7 @@ const Constants = {
     SingleVendor: 'SingleVendor',
     Profile: 'Profile',
     QueueList: 'QueueList',
+    UserInfo: 'UserInfo',
   },
 };
 

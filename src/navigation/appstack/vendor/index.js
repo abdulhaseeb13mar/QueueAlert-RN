@@ -8,7 +8,12 @@ import constants from '../../../theme/constants';
 import {WrapperScreen, HeaderMenuVendor} from '../../../components';
 
 //Screens
-import {HomeScreen, QueueList} from '../../../screens/vendor';
+import {
+  HomeScreen,
+  QueueList,
+  Profile,
+  UserInfo,
+} from '../../../screens/vendor';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +34,8 @@ export default function VendorStack() {
         }}>
         <Stack.Screen name={appScreens.Home} component={HomeScreen} />
         <Stack.Screen name={appScreens.QueueList} component={QueueList} />
+        <Stack.Screen name={appScreens.Profile} component={Profile} />
+        <Stack.Screen name={appScreens.UserInfo} component={UserInfo} />
       </Stack.Navigator>
     </WrapperScreen>
   );

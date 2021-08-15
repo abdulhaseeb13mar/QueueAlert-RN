@@ -1,12 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button, ActivityIndicator} from 'react-native';
+import {View, Text, Button, ActivityIndicator, ScrollView} from 'react-native';
 import {InnerWrapper} from '../../../components';
 import {connect} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './style';
 import constants from '../../../theme/constants';
+import {getAge} from '../../../utils/helpers';
 import {
   incrementNumberAction,
   setCurrentNumberAction,
@@ -36,6 +38,7 @@ const HomePage = props => {
   const [loading2, setLoading2] = useState(false);
   const [loading3, setLoading3] = useState(false);
   const [loading4, setLoading4] = useState(false);
+  const [personInfo, setPersonInfo] = useState(null);
 
   const endQueue = async () => {
     setLoading4(true);
@@ -130,64 +133,89 @@ const HomePage = props => {
       .catch();
   };
 
-  const logout = async () => {
-    await AsyncStorage.removeItem(async.user);
-    props.setUserInfoAction({userType: 'none'});
-  };
+  useEffect(() => {
+    let currentPerson = props.queue[props.currentNumber - 1];
+    if (!currentPerson) {
+      setPersonInfo(null);
+      return;
+    }
+    if (currentPerson.number === props.currentNumber) {
+      setPersonInfo(currentPerson);
+    } else {
+      for (let i = 0; i < props.queue.length; i++) {
+        if (props.queue[i].number === props.currentNumber) {
+          setPersonInfo(currentPerson);
+          break;
+        }
+      }
+    }
+  }, [props.currentNumber]);
   return (
     <InnerWrapper>
-      <Text style={{textAlign: 'center'}}>Vendor Home Screen</Text>
-      <View style={styles.container}>
-        <Text style={styles.currentNumText}>CURRENT NUMBER</Text>
-        <Text style={styles.currentNumber}>
-          {props.currentNumber < 10
-            ? `0${props.currentNumber}`
-            : props.currentNumber}
-        </Text>
-        <View style={styles.nextBackContainer}>
-          {loading3 ? (
-            <ActivityIndicator size="small" color="#0000ff" />
+      <ScrollView style={{width: '100%'}}>
+        <View style={styles.container}>
+          <Text style={styles.currentNumText}>CURRENT NUMBER</Text>
+          <Text style={styles.currentNumber}>
+            {props.currentNumber < 10
+              ? `0${props.currentNumber}`
+              : props.currentNumber}
+          </Text>
+          <View style={styles.nextBackContainer}>
+            {loading3 ? (
+              <ActivityIndicator size="small" color="#0000ff" />
+            ) : (
+              <Button
+                title="Back"
+                disabled={props.currentNumber === 0 || loading2 === true}
+                onPress={decrementQueue}
+              />
+            )}
+            {loading2 ? (
+              <ActivityIndicator size="small" color="#0000ff" />
+            ) : (
+              <Button
+                title="Next"
+                disabled={props.currentNumber === 0 || loading3 === true}
+                onPress={incrementQueue}
+              />
+            )}
+          </View>
+          <View style={{marginTop: 20}}>
+            {loading1 ? (
+              <ActivityIndicator size="small" color="#0000ff" />
+            ) : (
+              <Button
+                title="Start"
+                onPress={startQueue}
+                disabled={props.currentNumber !== 0}
+              />
+            )}
+          </View>
+          <View style={{marginTop: 20}}>
+            {loading4 ? (
+              <ActivityIndicator size="small" color="#0000ff" />
+            ) : (
+              <Button
+                title="End"
+                onPress={endQueue}
+                disabled={props.currentNumber === 0}
+              />
+            )}
+          </View>
+          {personInfo ? (
+            <View>
+              <Text>NAME: {personInfo.name}</Text>
+              <Text>
+                AGE: {getAge(new Date(personInfo.dob.toDate()).toDateString())}
+              </Text>
+              <Text>GENDER: {personInfo.gender}</Text>
+              <Text>EMAIL: {personInfo.email}</Text>
+            </View>
           ) : (
-            <Button
-              title="Back"
-              disabled={props.currentNumber === 0 || loading2 === true}
-              onPress={decrementQueue}
-            />
-          )}
-          {loading2 ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Button
-              title="Next"
-              disabled={props.currentNumber === 0 || loading3 === true}
-              onPress={incrementQueue}
-            />
+            <Text>No User</Text>
           )}
         </View>
-        <View style={{marginTop: 20}}>
-          {loading1 ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Button
-              title="Start"
-              onPress={startQueue}
-              disabled={props.currentNumber !== 0}
-            />
-          )}
-        </View>
-        <View style={{marginTop: 20}}>
-          {loading4 ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Button
-              title="End"
-              onPress={endQueue}
-              disabled={props.currentNumber === 0}
-            />
-          )}
-        </View>
-        <Button title="logout" onPress={logout} />
-      </View>
+      </ScrollView>
     </InnerWrapper>
   );
 };
@@ -195,6 +223,7 @@ const HomePage = props => {
 const mapStateToProps = state => ({
   currentNumber: state.NummberReducer,
   user: state.userReducer,
+  queue: state.QueueReducer,
 });
 
 export default connect(mapStateToProps, {

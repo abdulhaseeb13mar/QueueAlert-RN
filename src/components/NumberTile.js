@@ -4,10 +4,16 @@ import {withTheme} from 'react-native-paper';
 import {connect} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {width} from './Responsive';
+import navigator from '../utils/navigator';
+import Constants from '../theme/constants';
 
 const NumberTile = ({height, theme, number}) => {
   const {colors} = theme;
   const StyleProp = {colors, height};
+
+  const moveToUserInfo = () =>
+    navigator.navigate(Constants.appScreens.UserInfo, number);
+
   return (
     <View style={styles(StyleProp).tileContainer}>
       <View style={styles(StyleProp).numberCircle}>
@@ -18,7 +24,9 @@ const NumberTile = ({height, theme, number}) => {
         <Text numberOfLines={1} style={styles(StyleProp).nameText}>
           {number.name}
         </Text>
-        <TouchableOpacity style={styles(StyleProp).iconContainer}>
+        <TouchableOpacity
+          style={styles(StyleProp).iconContainer}
+          onPress={moveToUserInfo}>
           <Ionicons name="ios-information-circle-outline" size={24} />
         </TouchableOpacity>
       </View>
