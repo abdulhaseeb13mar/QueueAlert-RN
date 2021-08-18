@@ -33,7 +33,16 @@ const HeaderMenu = props => {
             name={`ios-list-circle${
               props.currentScreen === appScreens.QueueList ? '' : '-outline'
             }`}
-            size={25}
+            size={23}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleNavigation(appScreens.AddPerson)}>
+          <Ionicons
+            name={`ios-person-add${
+              props.currentScreen === appScreens.AddPerson ? '' : '-outline'
+            }`}
+            size={23}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleNavigation(appScreens.Profile)}>

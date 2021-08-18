@@ -63,6 +63,7 @@ const SignupVendor = props => {
             endQueue: 0,
             userType: 'vendor',
             uid: user.uid,
+            isAccepting: false,
           };
           setLoading(false);
           firestore()

@@ -13,6 +13,7 @@ import {
   QueueList,
   Profile,
   UserInfo,
+  AddPerson,
 } from '../../../screens/vendor';
 
 const Stack = createStackNavigator();
@@ -36,6 +37,7 @@ export default function VendorStack() {
         <Stack.Screen name={appScreens.QueueList} component={QueueList} />
         <Stack.Screen name={appScreens.Profile} component={Profile} />
         <Stack.Screen name={appScreens.UserInfo} component={UserInfo} />
+        <Stack.Screen name={appScreens.AddPerson} component={AddPerson} />
       </Stack.Navigator>
     </WrapperScreen>
   );

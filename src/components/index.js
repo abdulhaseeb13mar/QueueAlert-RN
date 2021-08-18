@@ -9,6 +9,7 @@ import InnerWrapper from './InnerWrapper';
 import HeaderMenuPeople from './HeaderMenuPeople';
 import HeaderMenuVendor from './HeaderMenuVendor';
 import NumberTile from './NumberTile';
+import TextInputPaper from './TextInputPaper';
 
 export {
   WrapperScreen,
@@ -22,4 +23,5 @@ export {
   HeaderMenuPeople,
   HeaderMenuVendor,
   NumberTile,
+  TextInputPaper,
 };

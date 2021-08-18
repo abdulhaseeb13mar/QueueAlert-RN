@@ -20,6 +20,7 @@ import {connect} from 'react-redux';
 import {setUserInfoAction} from '../../../redux/actions';
 import {Navigator} from '../../../utils';
 import constants from '../../../theme/constants';
+import {getStructuredDate} from '../../../utils/helpers';
 
 const SignupPeople = props => {
   const [dob, setDob] = useState(new Date());
@@ -130,15 +131,12 @@ const SignupPeople = props => {
   };
 
   const onDateChange = (event, selectedDate) => {
-    console.log(selectedDate);
-    selectedDate && setDob(selectedDate);
     setShowDatePicker(false);
+    selectedDate && setDob(selectedDate);
   };
 
   const goToLogin = () => Navigator.navigate(constants.authScreens.Login);
 
-  const getStructuredDate = d =>
-    d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
   const toggleDatePicker = () => setShowDatePicker(!showDatePicker);
   const changeName = text => setName(text);
   const changeEmail = text => setEmail(text);
@@ -189,7 +187,7 @@ const SignupPeople = props => {
             mode="date"
             display="default"
             onChange={onDateChange}
-            onTouchCancel
+            onTouchCancel={() => setShowDatePicker(false)}
           />
         )}
         <TextInput

@@ -22,3 +22,6 @@ export const getAge = dateString => {
   }
   return age;
 };
+
+export const getStructuredDate = d =>
+  d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();

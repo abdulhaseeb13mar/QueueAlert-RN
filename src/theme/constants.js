@@ -3,6 +3,7 @@ const Constants = {
     user: 'user',
     currentNum: 'currentNum',
     vendorsList: 'vendorsList',
+    isAccepting: 'isAccepting',
   },
   collections: {
     People: 'People',
@@ -18,6 +19,7 @@ const Constants = {
     SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',
     SET_HEIGHT: 'SET_HEIGHT',
     SET_QUEUE: 'SET_QUEUE',
+    SET_IS_ACCEPTING: 'SET_IS_ACCEPTING',
   },
   authScreens: {
     Login: 'Login',
@@ -30,6 +32,7 @@ const Constants = {
     Profile: 'Profile',
     QueueList: 'QueueList',
     UserInfo: 'UserInfo',
+    AddPerson: 'AddPerson',
   },
 };
 

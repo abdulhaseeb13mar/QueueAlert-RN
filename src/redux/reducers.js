@@ -15,6 +15,9 @@ const userReducer = (state = userInfo, action) => {
     case actionTypes.SET_USER_INFO:
       state = Object.assign({}, state, {...action.payload});
       return state;
+    case actionTypes.SET_IS_ACCEPTING:
+      state = Object.assign({}, state, {...action.payload});
+      return state;
 
     default:
       break;

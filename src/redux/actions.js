@@ -63,3 +63,12 @@ export const setQueue = queue => {
     });
   };
 };
+
+export const setIsAccepting = isAccepting => {
+  return async dispatch => {
+    dispatch({
+      type: actionTypes.SET_IS_ACCEPTING,
+      payload: isAccepting,
+    });
+  };
+};

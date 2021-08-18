@@ -15,22 +15,30 @@ import {
   decrementNumberAction,
   setUserInfoAction,
   setQueue,
+  setIsAccepting,
 } from '../../../redux/actions';
 
 const HomePage = props => {
   const {async, collections} = constants;
 
-  const VendorRef = firestore()
+  const VendorQueueRef = firestore()
     .collection(collections.Queues)
     .doc(props.user.uid);
 
-  const singleQueueRef = VendorRef.collection(collections.Queue);
+  const VendorRef = firestore()
+    .collection(collections.Vendors)
+    .doc(props.user.uid);
+
+  const singleQueueRef = VendorQueueRef.collection(collections.Queue);
 
   useEffect(() => {
-    getCurrentNum();
-    const subscriber = singleQueueRef.onSnapshot(documentSnapshot =>
-      props.setQueue(documentSnapshot.docs.map(doc => doc.data())),
-    );
+    const subscriber = VendorQueueRef.onSnapshot(async documentSnapshot => {
+      let currentNum = await getCurrentNum();
+      let queue = [...documentSnapshot.data().queue];
+      // let queue = documentSnapshot.docs.map(doc => doc.data());
+      getUserInfo(queue, parseInt(currentNum, 10));
+      props.setQueue(queue);
+    });
     return () => subscriber();
   }, []);
 
@@ -42,22 +50,40 @@ const HomePage = props => {
 
   const endQueue = async () => {
     setLoading4(true);
-    await VendorRef.delete()
-      .then(async () => {
+    await firestore()
+      .runTransaction(transaction => {
+        return transaction.get(VendorRef).then(VendorInfo => {
+          if (!VendorInfo.exists) {
+            return Promise.reject('Could not end The queue, vendor not found');
+          }
+          transaction.update(VendorRef, {
+            isAccepting: false,
+          });
+          transaction.delete(VendorQueueRef);
+          return Promise.resolve('Transaction completed');
+        });
+      })
+      .then(async status => {
         try {
           await AsyncStorage.removeItem(async.currentNum);
+          props.setIsAccepting({isAccepting: false});
           props.setCurrentNumberAction(0);
+          const userInfo = await AsyncStorage.getItem(async.user);
+          await AsyncStorage.setItem(
+            async.user,
+            JSON.stringify({...JSON.parse(userInfo), isAccepting: false}),
+          );
           setLoading4(false);
         } catch (e) {
           // saving error
         }
       })
-      .catch();
+      .catch(error => console.log(error));
   };
 
   const decrementQueue = async () => {
     setLoading3(true);
-    await VendorRef.update({currentNum: props.currentNumber - 1})
+    await VendorQueueRef.update({currentNum: props.currentNumber - 1})
       .then(async () => {
         props.decrementNumberAction(props.currentNumber);
         saveCurrentNum(props.currentNumber - 1);
@@ -67,13 +93,14 @@ const HomePage = props => {
   };
 
   const getCurrentNum = async () => {
+    let valueToreturn;
     try {
       const value = await AsyncStorage.getItem(async.currentNum);
       if (value !== null) {
+        valueToreturn = value;
         props.setCurrentNumberAction(parseInt(value, 10));
-        console.log(value);
       }
-      await VendorRef.get()
+      await VendorQueueRef.get()
         .then(async doc => {
           if (
             doc.exists &&
@@ -83,13 +110,16 @@ const HomePage = props => {
             console.log(
               'db main tha aur local main bhi tha lekin value different thi',
             );
+            valueToreturn = doc.data().currentNum;
             props.setCurrentNumberAction(doc.data().currentNum);
             await saveCurrentNum(doc.data().currentNum);
           } else if (!doc.exists) {
             console.log('db main he nae tha');
+            valueToreturn = 0;
             props.setCurrentNumberAction(0);
           } else if (value == null && doc.exists) {
             console.log('local main nae tha lekin db main tha');
+            valueToreturn = doc.data().currentNum;
             props.setCurrentNumberAction(doc.data().currentNum);
             await saveCurrentNum(doc.data().currentNum);
           }
@@ -98,6 +128,7 @@ const HomePage = props => {
     } catch (e) {
       // error reading value
     }
+    return valueToreturn;
   };
 
   const saveCurrentNum = async num => {
@@ -110,7 +141,7 @@ const HomePage = props => {
 
   const incrementQueue = async () => {
     setLoading2(true);
-    await VendorRef.update({currentNum: props.currentNumber + 1})
+    await VendorQueueRef.update({currentNum: props.currentNumber + 1})
       .then(async () => {
         props.incrementNumberAction(props.currentNumber);
         saveCurrentNum(props.currentNumber + 1);
@@ -121,9 +152,8 @@ const HomePage = props => {
 
   const startQueue = async () => {
     setLoading1(true);
-    await VendorRef.set({
+    await VendorQueueRef.update({
       currentNum: 1,
-      vendor: firestore().doc(`Vendors/${props.user.uid}`),
     })
       .then(async res => {
         props.incrementNumberAction(props.currentNumber);
@@ -134,22 +164,27 @@ const HomePage = props => {
   };
 
   useEffect(() => {
-    let currentPerson = props.queue[props.currentNumber - 1];
+    getUserInfo(props.queue, props.currentNumber);
+  }, [props.currentNumber]);
+
+  const getUserInfo = (queue, currentNum) => {
+    let currentPerson = queue[currentNum - 1];
     if (!currentPerson) {
       setPersonInfo(null);
       return;
     }
-    if (currentPerson.number === props.currentNumber) {
+    if (currentPerson.number === currentNum) {
       setPersonInfo(currentPerson);
     } else {
-      for (let i = 0; i < props.queue.length; i++) {
-        if (props.queue[i].number === props.currentNumber) {
+      for (let i = 0; i < queue.length; i++) {
+        if (queue[i].number === currentNum) {
           setPersonInfo(currentPerson);
           break;
         }
       }
     }
-  }, [props.currentNumber]);
+  };
+
   return (
     <InnerWrapper>
       <ScrollView style={{width: '100%'}}>
@@ -232,4 +267,5 @@ export default connect(mapStateToProps, {
   decrementNumberAction,
   setUserInfoAction,
   setQueue,
+  setIsAccepting,
 })(HomePage);
