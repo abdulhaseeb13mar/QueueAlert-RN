@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {Text, BackHandler} from 'react-native';
+import {Text, BackHandler, View} from 'react-native';
 import {connect} from 'react-redux';
 // import styles from './style';
 import firestore from '@react-native-firebase/firestore';
@@ -9,6 +9,7 @@ import {withTheme} from 'react-native-paper';
 import constants from '../../../theme/constants';
 import {InnerWrapper} from '../../../components';
 import navigator from '../../../utils/navigator';
+import {Button} from 'react-native-paper';
 
 const SingleVendor = ({theme, height, ...props}) => {
   const [currentNumber, setCurrentNumber] = useState(0);
@@ -56,9 +57,10 @@ const SingleVendor = ({theme, height, ...props}) => {
       .catch(e => console.log(e));
   };
 
+  const bookNumber = async () => {};
+
   return (
     <InnerWrapper>
-      {console.log('---------', allQueue)}
       {currentNumber ? (
         <Text style={{marginTop: 100, color: 'black', fontSize: 20}}>
           {singleVendor.name} QUEUE ONGOING...
@@ -76,6 +78,11 @@ const SingleVendor = ({theme, height, ...props}) => {
           ? `0${currentNumber}`
           : currentNumber}
       </Text>
+      <View>
+        <Button mode="contained" onPress={bookNumber}>
+          Book a Number
+        </Button>
+      </View>
     </InnerWrapper>
   );
 };

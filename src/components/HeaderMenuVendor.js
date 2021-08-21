@@ -47,7 +47,7 @@ const HeaderMenu = props => {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleNavigation(appScreens.Profile)}>
           <Ionicons
-            name={`ios-person${
+            name={`ios-settings${
               props.currentScreen === appScreens.Profile ? '' : '-outline'
             }`}
             size={23}

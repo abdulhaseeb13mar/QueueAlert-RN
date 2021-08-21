@@ -34,6 +34,16 @@ const Constants = {
     UserInfo: 'UserInfo',
     AddPerson: 'AddPerson',
   },
+  snackbarColors: {
+    Success: '#2e7d32',
+    Error: '#d50000',
+    Info: '#24806CFF',
+  },
+  snackbarType: {
+    SNACKBAR_SUCCESS: 'SNACKBAR_SUCCESS',
+    SNACKBAR_ERROR: 'SNACKBAR_ERROR',
+    SNACKBAR_INFO: 'SNACKBAR_INFO',
+  },
 };
 
 export default Constants;

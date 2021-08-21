@@ -1,5 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, {useState, createRef} from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {InnerWrapper, TextInputPaper} from '../../../components';
@@ -10,9 +9,12 @@ import {getStructuredDate} from '../../../utils/helpers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {isFormValid} from './validation';
 import firestore from '@react-native-firebase/firestore';
+import {showSnackbar} from '../../../utils/helpers';
+import SuccessfulAddedModal from '../../../components/modals/SuccessfulAdded';
 
 const AddPerson = ({theme, height, ...props}) => {
   const StyleProp = {colors: theme.colors, height};
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dob, setDob] = useState(new Date());
   const [isVisible, setIsVisible] = useState(false);
@@ -21,16 +23,21 @@ const AddPerson = ({theme, height, ...props}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [userData, setUserData] = useState(null);
   const [errMsgs, setErrMsgs] = useState({
     name: '',
     email: '',
     phone: '',
   });
 
-  const {collections} = constants;
+  const {collections, snackbarType} = constants;
 
   const VendorQueueRef = firestore()
     .collection(collections.Queues)
+    .doc(props.user.uid);
+
+  const VendorRef = firestore()
+    .collection(collections.Vendors)
     .doc(props.user.uid);
 
   const onDateChange = (event, selectedDate) => {
@@ -41,6 +48,14 @@ const AddPerson = ({theme, height, ...props}) => {
   const setGender = bool => {
     setIsVisible(false);
     setIsMale(bool);
+  };
+
+  const clearFields = () => {
+    setName('');
+    setEmail('');
+    setPhone('');
+    setDob(new Date());
+    setIsMale(true);
   };
 
   const handleAddPerson = async () => {
@@ -57,26 +72,46 @@ const AddPerson = ({theme, height, ...props}) => {
         phone,
         dob,
       };
-      await firestore()
-        .runTransaction(transaction => {
-          return transaction.get(VendorQueueRef).then(QueueInfo => {
-            if (!QueueInfo.exists) {
-              return Promise.reject('Person was not added unfortunately');
-            }
-            const totalEnrollments = QueueInfo.data().totalEnrollment;
-            console.log(totalEnrollments);
-            transaction.update(VendorQueueRef, {
-              totalEnrollment: totalEnrollments + 1,
-              queue: firestore.FieldValue.arrayUnion({
-                ...data,
-                number: totalEnrollments + 1,
-              }),
-            });
-            return Promise.resolve('Transaction completed');
-          });
+      await VendorRef.get()
+        .then(async vendorInfo => {
+          if (vendorInfo.data().isAccepting) {
+            await firestore()
+              .runTransaction(transaction => {
+                return transaction.get(VendorQueueRef).then(QueueInfo => {
+                  if (!QueueInfo.exists) {
+                    return Promise.reject('Person was not added unfortunately');
+                  }
+                  const totalEnrollments = QueueInfo.data().totalEnrollment;
+                  transaction.update(VendorQueueRef, {
+                    totalEnrollment: totalEnrollments + 1,
+                    queue: firestore.FieldValue.arrayUnion({
+                      ...data,
+                      number: totalEnrollments + 1,
+                    }),
+                  });
+                  return Promise.resolve(totalEnrollments + 1);
+                });
+              })
+              .then(number => {
+                setUserData({
+                  name,
+                  email,
+                  phone,
+                  dob,
+                  number,
+                  gender: isMale,
+                });
+                clearFields();
+              })
+              .catch(error => console.log(error));
+          } else {
+            showSnackbar(
+              'Vendor not accepting queue numbers',
+              snackbarType.SNACKBAR_ERROR,
+            );
+          }
         })
-        .then(status => console.log(status))
-        .catch(error => console.log(error));
+        .catch();
 
       setLoading(false);
     }
@@ -94,36 +129,36 @@ const AddPerson = ({theme, height, ...props}) => {
 
   return (
     <InnerWrapper>
-      <View style={{width: '100%'}}>
-        <Text style={{fontWeight: 'bold', alignSelf: 'flex-start'}}>
-          Name: {errMsgs.name}
-        </Text>
-        <TextInputPaper placeholder="Name" onChangeText={t => setName(t)} />
+      <View style={styles(StyleProp).inputContainer}>
+        <Text style={styles(StyleProp).labelStyle}>Name: {errMsgs.name}</Text>
+        <TextInputPaper
+          placeholder="Name"
+          onChangeText={t => setName(t)}
+          value={name}
+        />
       </View>
-      <View style={{width: '100%'}}>
-        <Text style={{fontWeight: 'bold', alignSelf: 'flex-start'}}>
-          Email: {errMsgs.email}
-        </Text>
+      <View style={styles(StyleProp).inputContainer}>
+        <Text style={styles(StyleProp).labelStyle}>Email: {errMsgs.email}</Text>
         <TextInputPaper
           placeholder="email"
           keyboardType="email-address"
           onChangeText={t => setEmail(t)}
+          value={email}
         />
       </View>
-      <View style={{width: '100%'}}>
-        <Text style={{fontWeight: 'bold', alignSelf: 'flex-start'}}>
+      <View style={styles(StyleProp).inputContainer}>
+        <Text style={styles(StyleProp).labelStyle}>
           Phone#: {errMsgs.phone}
         </Text>
         <TextInputPaper
           placeholder="Phone#"
           keyboardType="number-pad"
           onChangeText={t => setPhone(t)}
+          value={phone}
         />
       </View>
-      <View style={{width: '100%'}}>
-        <Text style={{fontWeight: 'bold', alignSelf: 'flex-start'}}>
-          Date of Birth:
-        </Text>
+      <View style={styles(StyleProp).inputContainer}>
+        <Text style={styles(StyleProp).labelStyle}>Date of Birth:</Text>
         <TextInputPaper
           placeholder="Date of Birth"
           onPressOut={() => setShowDatePicker(true)}
@@ -140,26 +175,17 @@ const AddPerson = ({theme, height, ...props}) => {
           onTouchCancel={() => setShowDatePicker(false)}
         />
       )}
-      <View style={{width: '100%'}}>
-        <Text style={{fontWeight: 'bold', alignSelf: 'flex-start'}}>
-          Gender:
-        </Text>
+      <View style={styles(StyleProp).inputContainer}>
+        <Text style={styles(StyleProp).labelStyle}>Gender:</Text>
         <Menu
           visible={isVisible}
           onDismiss={() => setIsVisible(false)}
           anchor={
-            <View
-              style={{
-                alignItems: 'flex-start',
-              }}>
+            <View style={styles(StyleProp).dropDownContainer}>
               <Button
-                style={{
-                  backgroundColor: 'white',
-                  borderWidth: 1,
-                  borderRadius: 8,
-                }}
-                contentStyle={{flexDirection: 'row-reverse'}}
-                labelStyle={{color: 'black'}}
+                style={styles(StyleProp).dropDownBtn}
+                contentStyle={styles(StyleProp).btnContentStyle}
+                labelStyle={styles(StyleProp).BtnLabel}
                 uppercase={false}
                 mode="contained"
                 icon={() => (
@@ -181,11 +207,27 @@ const AddPerson = ({theme, height, ...props}) => {
         onPress={handleAddPerson}>
         {loading ? '' : 'Add person'}
       </Button>
+      <SuccessfulAddedModal
+        userData={userData}
+        onClose={() => setUserData(null)}
+      />
     </InnerWrapper>
   );
 };
 
-const styles = ({colors, height}) => StyleSheet.create({});
+const styles = ({colors, height}) =>
+  StyleSheet.create({
+    inputContainer: {width: '100%'},
+    labelStyle: {fontWeight: 'bold', alignSelf: 'flex-start'},
+    dropDownContainer: {alignItems: 'flex-start'},
+    dropDownBtn: {
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+    btnContentStyle: {flexDirection: 'row-reverse'},
+    BtnLabel: {color: 'black'},
+  });
 
 const mapStateToProps = state => ({
   height: state.HeightReducer,

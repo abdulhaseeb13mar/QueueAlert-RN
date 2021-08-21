@@ -1,16 +1,7 @@
-// //Themes
-// import { Constants } from '../theme'
+import Snackbar from 'react-native-snackbar';
+import constants from '../theme/constants';
 
-// //Constant
-// const { emailRegex } = Constants
-
-// export const validateEmail = email => {
-//     return emailRegex.test(email)
-// }
-
-// export default {
-//     validateEmail,
-// }
+const {snackbarType, snackbarColors} = constants;
 
 export const getAge = dateString => {
   var today = new Date();
@@ -25,3 +16,26 @@ export const getAge = dateString => {
 
 export const getStructuredDate = d =>
   d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
+
+export const showSnackbar = (text, type) => {
+  var backgroundColor = '';
+
+  switch (type) {
+    case snackbarType.SNACKBAR_SUCCESS:
+      backgroundColor = snackbarColors.Success;
+      break;
+    case snackbarType.SNACKBAR_ERROR:
+      backgroundColor = snackbarColors.Error;
+      break;
+    case snackbarType.SNACKBAR_INFO:
+      backgroundColor = snackbarColors.Info;
+      break;
+    default:
+      backgroundColor = snackbarColors.Info;
+  }
+
+  Snackbar.show({
+    text: text,
+    backgroundColor: backgroundColor,
+  });
+};

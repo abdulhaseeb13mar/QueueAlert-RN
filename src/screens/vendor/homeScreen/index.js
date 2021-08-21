@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button, ActivityIndicator, ScrollView} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {InnerWrapper} from '../../../components';
 import {connect} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './style';
 import constants from '../../../theme/constants';
-import {getAge} from '../../../utils/helpers';
+import {getAge, showSnackbar} from '../../../utils/helpers';
+import {Button} from 'react-native-paper';
 import {
   incrementNumberAction,
   setCurrentNumberAction,
@@ -19,7 +20,7 @@ import {
 } from '../../../redux/actions';
 
 const HomePage = props => {
-  const {async, collections} = constants;
+  const {async, collections, snackbarType} = constants;
 
   const VendorQueueRef = firestore()
     .collection(collections.Queues)
@@ -29,13 +30,13 @@ const HomePage = props => {
     .collection(collections.Vendors)
     .doc(props.user.uid);
 
-  const singleQueueRef = VendorQueueRef.collection(collections.Queue);
-
   useEffect(() => {
     const subscriber = VendorQueueRef.onSnapshot(async documentSnapshot => {
       let currentNum = await getCurrentNum();
-      let queue = [...documentSnapshot.data().queue];
-      // let queue = documentSnapshot.docs.map(doc => doc.data());
+      let queue = [];
+      if (documentSnapshot.exists) {
+        queue = [...documentSnapshot.data().queue];
+      }
       getUserInfo(queue, parseInt(currentNum, 10));
       props.setQueue(queue);
     });
@@ -151,14 +152,26 @@ const HomePage = props => {
   };
 
   const startQueue = async () => {
-    setLoading1(true);
-    await VendorQueueRef.update({
-      currentNum: 1,
-    })
-      .then(async res => {
-        props.incrementNumberAction(props.currentNumber);
-        await saveCurrentNum(props.currentNumber + 1);
-        setLoading1(false);
+    setLoading3(true);
+    await VendorRef.get()
+      .then(async vendorInfo => {
+        if (vendorInfo.data().isAccepting) {
+          await VendorQueueRef.update({
+            currentNum: 1,
+          })
+            .then(async res => {
+              props.incrementNumberAction(props.currentNumber);
+              await saveCurrentNum(props.currentNumber + 1);
+              setLoading3(false);
+            })
+            .catch();
+        } else {
+          setLoading3(false);
+          showSnackbar(
+            'Vendor not accepting queue numbers',
+            snackbarType.SNACKBAR_ERROR,
+          );
+        }
       })
       .catch();
   };
@@ -196,49 +209,44 @@ const HomePage = props => {
               : props.currentNumber}
           </Text>
           <View style={styles.nextBackContainer}>
-            {loading3 ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <Button
-                title="Back"
-                disabled={props.currentNumber === 0 || loading2 === true}
-                onPress={decrementQueue}
-              />
-            )}
-            {loading2 ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <Button
-                title="Next"
-                disabled={props.currentNumber === 0 || loading3 === true}
-                onPress={incrementQueue}
-              />
-            )}
+            <Button
+              mode="contained"
+              loading={loading1}
+              disabled={props.currentNumber === 0 || loading2 || loading1}
+              onPress={decrementQueue}>
+              Back
+            </Button>
+            <Button
+              mode="contained"
+              loading={loading2}
+              disabled={props.currentNumber === 0 || loading3 || loading2}
+              onPress={incrementQueue}>
+              Next
+            </Button>
           </View>
           <View style={{marginTop: 20}}>
-            {loading1 ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <Button
-                title="Start"
-                onPress={startQueue}
-                disabled={props.currentNumber !== 0}
-              />
-            )}
+            <Button
+              mode="contained"
+              loading={loading3}
+              onPress={startQueue}
+              disabled={props.currentNumber !== 0 || loading3}>
+              Start Queue
+            </Button>
           </View>
           <View style={{marginTop: 20}}>
-            {loading4 ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <Button
-                title="End"
-                onPress={endQueue}
-                disabled={props.currentNumber === 0}
-              />
-            )}
+            <Button
+              mode="contained"
+              loading={loading4}
+              onPress={endQueue}
+              disabled={props.currentNumber === 0 || loading4}>
+              End Queue
+            </Button>
           </View>
           {personInfo ? (
-            <View>
+            <View style={{marginTop: 50}}>
+              <Text style={{marginBottom: 20, fontWeight: 'bold'}}>
+                CURRENT USER INFO
+              </Text>
               <Text>NAME: {personInfo.name}</Text>
               <Text>
                 AGE: {getAge(new Date(personInfo.dob.toDate()).toDateString())}
