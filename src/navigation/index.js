@@ -16,6 +16,7 @@ import {
   DefaultTheme,
   // DarkTheme,
 } from 'react-native-paper';
+import UseCustomStateSelector from '../../useCustomStateSelector';
 
 //Stacks
 import AuthStack from './authStack';
@@ -25,6 +26,7 @@ import VendorStack from './appstack/vendor';
 const Routes = props => {
   const insets = useSafeAreaInsets();
   const frame = useSafeAreaFrame();
+  // const [userType] = useCustomStateSelector('userReducer', ['userType']);
   const HEIGHT =
     (Platform.OS === 'ios' ? height : frame.height) -
     (insets.bottom + insets.top);
@@ -64,22 +66,27 @@ const Routes = props => {
     <NavigationContainer
       ref={navigatorRef => Navigator.setTopLevelNavigator(navigatorRef)}>
       <PaperProvider theme={LightTheme}>
-        {props.user != null ? (
-          props.user.userType === 'person' ? (
-            <PeopleStack />
-          ) : props.user.userType === 'vendor' ? (
-            <VendorStack />
-          ) : (
-            <AuthStack />
-          )
-        ) : null}
+        {/* {props.user != null ? ( */}
+        {props.userType === 'person' ? (
+          <PeopleStack />
+        ) : props.userType === 'vendor' ? (
+          <VendorStack />
+        ) : (
+          <AuthStack />
+        )}
+        {/* ) : null} */}
       </PaperProvider>
     </NavigationContainer>
   );
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userType: UseCustomStateSelector(state, 'userReducer', ['userType'])[0],
 });
+
+// const CustomSelector = createSelector(
+//   [state => state.userReducer.userType],
+//   usertype => usertype,
+// );
 
 export default connect(mapStateToProps, {setUserInfoAction, setHeight})(Routes);

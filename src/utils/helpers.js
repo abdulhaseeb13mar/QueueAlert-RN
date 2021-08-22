@@ -14,6 +14,11 @@ export const getAge = dateString => {
   return age;
 };
 
+export const SortQueue = queue =>
+  queue.sort((a, b) =>
+    a.number > b.number ? 1 : b.number > a.number ? -1 : 0,
+  );
+
 export const getStructuredDate = d =>
   d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
 
@@ -38,4 +43,15 @@ export const showSnackbar = (text, type) => {
     text: text,
     backgroundColor: backgroundColor,
   });
+};
+
+export const generateId = () => {
+  var result = '';
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < 16; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };

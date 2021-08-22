@@ -11,6 +11,7 @@ import {isFormValid} from './validation';
 import firestore from '@react-native-firebase/firestore';
 import {showSnackbar} from '../../../utils/helpers';
 import SuccessfulAddedModal from '../../../components/modals/SuccessfulAdded';
+import {generateId} from '../../../utils/helpers';
 
 const AddPerson = ({theme, height, ...props}) => {
   const StyleProp = {colors: theme.colors, height};
@@ -82,12 +83,14 @@ const AddPerson = ({theme, height, ...props}) => {
                     return Promise.reject('Person was not added unfortunately');
                   }
                   const totalEnrollments = QueueInfo.data().totalEnrollment;
+                  const uid = generateId();
                   transaction.update(VendorQueueRef, {
                     totalEnrollment: totalEnrollments + 1,
-                    queue: firestore.FieldValue.arrayUnion({
+                    [`queue.${uid}`]: {
                       ...data,
+                      uid,
                       number: totalEnrollments + 1,
-                    }),
+                    },
                   });
                   return Promise.resolve(totalEnrollments + 1);
                 });

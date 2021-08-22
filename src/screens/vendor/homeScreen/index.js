@@ -8,7 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './style';
 import constants from '../../../theme/constants';
-import {getAge, showSnackbar} from '../../../utils/helpers';
+import {getAge, showSnackbar, SortQueue} from '../../../utils/helpers';
 import {Button} from 'react-native-paper';
 import {
   incrementNumberAction,
@@ -35,7 +35,7 @@ const HomePage = props => {
       let currentNum = await getCurrentNum();
       let queue = [];
       if (documentSnapshot.exists) {
-        queue = [...documentSnapshot.data().queue];
+        queue = SortQueue(Object.values(documentSnapshot.data().queue));
       }
       getUserInfo(queue, parseInt(currentNum, 10));
       props.setQueue(queue);

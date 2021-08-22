@@ -34,7 +34,7 @@ const Profile = ({theme, height, ...props}) => {
         if (!Queue.exists) {
           await VendorQueueRef.set({
             currentNum: 0,
-            queue: [],
+            queue: {},
             totalEnrollment: 0,
             vendor: firestore().doc(`Vendors/${props.user.uid}`),
             hasStarted: false,
