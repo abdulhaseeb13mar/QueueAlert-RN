@@ -8,7 +8,12 @@ import constants from '../../../theme/constants';
 import {WrapperScreen, HeaderMenuPeople} from '../../../components';
 
 //Screens
-import {HomeScreen, SingleVendor, Profile} from '../../../screens/people';
+import {
+  HomeScreen,
+  SingleVendor,
+  Profile,
+  Bookings,
+} from '../../../screens/people';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +35,7 @@ export default function PeopleStack(props) {
         <Stack.Screen name={appScreens.Home} component={HomeScreen} />
         <Stack.Screen name={appScreens.SingleVendor} component={SingleVendor} />
         <Stack.Screen name={appScreens.Profile} component={Profile} />
+        <Stack.Screen name={appScreens.Bookings} component={Bookings} />
       </Stack.Navigator>
     </WrapperScreen>
   );

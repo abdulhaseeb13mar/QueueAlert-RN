@@ -20,7 +20,7 @@ const HeaderMenu = props => {
     <View style={styles.container}>
       <Text style={{fontSize: 28, fontWeight: 'bold'}}>Q Alert</Text>
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity onPress={() => handleNavigation(appScreens.Home, 0)}>
+        <TouchableOpacity onPress={() => handleNavigation(appScreens.Home)}>
           <Ionicons
             name={`ios-home${
               props.currentScreen === appScreens.Home ? '' : '-outline'
@@ -28,8 +28,15 @@ const HeaderMenu = props => {
             size={23}
           />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleNavigation(appScreens.Profile, 1)}>
+        <TouchableOpacity onPress={() => handleNavigation(appScreens.Bookings)}>
+          <Ionicons
+            name={`ios-calendar${
+              props.currentScreen === appScreens.Bookings ? '' : '-outline'
+            }`}
+            size={23}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleNavigation(appScreens.Profile)}>
           <Ionicons
             name={`ios-person${
               props.currentScreen === appScreens.Profile ? '' : '-outline'

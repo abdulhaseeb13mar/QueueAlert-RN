@@ -33,6 +33,7 @@ const Constants = {
     QueueList: 'QueueList',
     UserInfo: 'UserInfo',
     AddPerson: 'AddPerson',
+    Bookings: 'Bookings',
   },
   snackbarColors: {
     Success: '#2e7d32',

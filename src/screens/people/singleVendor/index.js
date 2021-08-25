@@ -76,7 +76,7 @@ const SingleVendor = ({theme, height, ...props}) => {
       gender,
       cancelled: false,
       phone: number,
-      dob: new Date(dob.toDate()),
+      dob: new Date(dob.seconds * 1000),
       uid,
     };
     setLoading(true);
@@ -97,6 +97,7 @@ const SingleVendor = ({theme, height, ...props}) => {
                     //push the user
                     await VendorRef.get()
                       .then(async vendorInfo => {
+                        const vendorName = vendorInfo.data().name;
                         if (vendorInfo.data().isAccepting) {
                           await firestore()
                             .runTransaction(transaction => {
@@ -110,11 +111,19 @@ const SingleVendor = ({theme, height, ...props}) => {
                                   }
                                   const totalEnrollments =
                                     QueueInfo.data().totalEnrollment;
+
                                   transaction.update(vendorQueueRef, {
                                     totalEnrollment: totalEnrollments + 1,
                                     [`queue.${props.user.uid}`]: {
                                       ...data,
                                       number: totalEnrollments + 1,
+                                    },
+                                  });
+                                  transaction.update(userRef, {
+                                    [`Booking.${singleVendor.uid}`]: {
+                                      number: totalEnrollments + 1,
+                                      name: vendorName,
+                                      queueId: singleVendor.uid,
                                     },
                                   });
                                   return Promise.resolve(totalEnrollments + 1);
