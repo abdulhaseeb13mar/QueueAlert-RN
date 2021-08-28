@@ -26,11 +26,18 @@ const Bookings = ({theme, height, ...props}) => {
     setLoading(true);
     await userRef
       .get()
-      .then(userInfo => {
+      .then(async userInfo => {
         if (!userInfo.exists) {
           return Promise.reject('User does not exist');
         }
+
+        let bookings = 
         setBookings(Object.values(userInfo.data().Booking));
+
+        for (let i = 0; i < .length; i++) {
+          const element = [i];
+          
+        }
       })
       .catch(err => showSnackbar(err, snackbarType.SNACKBAR_ERROR));
     setLoading(false);

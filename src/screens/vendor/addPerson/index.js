@@ -199,7 +199,15 @@ const AddPerson = ({theme, height, ...props}) => {
               </Button>
             </View>
           }>
-          <Menu.Item onPress={() => setGender(true)} title="Male" />
+          <Menu.Item
+            onPress={() => setGender(true)}
+            title={
+              <View>
+                <Text>hello</Text>
+                <Text>hello</Text>
+              </View>
+            }
+          />
           <Menu.Item onPress={() => setGender(false)} title="Female" />
         </Menu>
       </View>
