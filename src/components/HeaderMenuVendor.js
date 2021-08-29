@@ -10,10 +10,7 @@ import {setCurrentScreen} from '../redux/actions';
 const HeaderMenu = props => {
   const {appScreens} = constants;
 
-  const handleNavigation = screen => {
-    navigator.navigate(screen);
-    props.setCurrentScreen(screen);
-  };
+  const handleNavigation = screen => navigator.navigate(screen);
 
   return (
     <View style={styles.container}>

@@ -1,23 +1,18 @@
-import React, {useEffect} from 'react';
-import {BackHandler, Text} from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useCallback} from 'react';
+import {Text} from 'react-native';
 import {InnerWrapper} from '../../../components';
 import {connect} from 'react-redux';
 import {setCurrentScreen} from '../../../redux/actions';
 import constants from '../../../theme/constants';
-import navigator from '../../../utils/navigator';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Profile = props => {
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        navigator.navigate(constants.appScreens.Home);
-        props.setCurrentScreen(constants.appScreens.Home);
-        return true;
-      },
-    );
-    return () => backHandler.remove();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(constants.appScreens.Profile);
+    }, []),
+  );
   return (
     <InnerWrapper>
       <Text>Profile</Text>
@@ -25,4 +20,9 @@ const Profile = props => {
   );
 };
 
-export default connect(null, {setCurrentScreen})(Profile);
+const mapStateToProps = state => ({
+  height: state.HeightReducer,
+  currentScreen: state.ScreenReducer,
+});
+
+export default connect(mapStateToProps, {setCurrentScreen})(Profile);

@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState, useCallback} from 'react';
 import {View} from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
 import styles from './style';
@@ -11,11 +12,18 @@ import {FlatList, InnerWrapper, VendorTile} from '../../../components';
 import {withTheme} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import navigator from '../../../utils/navigator';
+import {useFocusEffect} from '@react-navigation/native';
 
 const HomePage = ({theme, height, ...props}) => {
   useEffect(() => {
     getAllVendors();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(constants.appScreens.Home);
+    }, []),
+  );
 
   const {colors} = theme;
   const StyleProp = {colors, height};
@@ -49,7 +57,6 @@ const HomePage = ({theme, height, ...props}) => {
 
   const handleCardPress = item => {
     navigator.navigate(constants.appScreens.SingleVendor, item);
-    props.setCurrentScreen(constants.appScreens.SingleVendor);
   };
 
   const logout = async () => {
@@ -104,6 +111,7 @@ const HomePage = ({theme, height, ...props}) => {
 
 const mapStateToProps = state => ({
   height: state.HeightReducer,
+  currentScreen: state.ScreenReducer,
 });
 
 export default connect(mapStateToProps, {setUserInfoAction, setCurrentScreen})(

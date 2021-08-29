@@ -4,9 +4,7 @@ import {height as InitalHeight} from '../components';
 
 const {actionTypes} = constants;
 
-const userInfo = {
-  userType: null,
-};
+const userInfo = null;
 const currentNumber = 0;
 const currentScreen = 'Home';
 const height = InitalHeight;

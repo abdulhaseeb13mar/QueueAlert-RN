@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
-import {Text, BackHandler, View} from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {Text, View} from 'react-native';
 import {connect} from 'react-redux';
 // import styles from './style';
 import firestore from '@react-native-firebase/firestore';
@@ -8,10 +9,10 @@ import {setUserInfoAction, setCurrentScreen} from '../../../redux/actions';
 import {withTheme} from 'react-native-paper';
 import constants from '../../../theme/constants';
 import {InnerWrapper} from '../../../components';
-import navigator from '../../../utils/navigator';
 import {Button} from 'react-native-paper';
 import {showSnackbar} from '../../../utils/helpers';
 import SuccessfulAddedModal from '../../../components/modals/SuccessfulAdded';
+import {useFocusEffect} from '@react-navigation/native';
 
 const SingleVendor = ({theme, height, ...props}) => {
   const [currentNumber, setCurrentNumber] = useState(0);
@@ -44,19 +45,14 @@ const SingleVendor = ({theme, height, ...props}) => {
       );
     });
     // getQueueOfVendor();
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        navigator.navigate(appScreens.Home);
-        props.setCurrentScreen(appScreens.Home);
-        return true;
-      },
-    );
-    return () => {
-      subscriber();
-      backHandler.remove();
-    };
+    return () => subscriber();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(appScreens.SingleVendor);
+    }, []),
+  );
 
   // const getQueueOfVendor = async () => {
   //   await vendorQueueRef
@@ -205,6 +201,7 @@ const SingleVendor = ({theme, height, ...props}) => {
 const mapStateToProps = state => ({
   height: state.HeightReducer,
   user: state.userReducer,
+  currentScreen: state.ScreenReducer,
 });
 export default connect(mapStateToProps, {setUserInfoAction, setCurrentScreen})(
   withTheme(SingleVendor),

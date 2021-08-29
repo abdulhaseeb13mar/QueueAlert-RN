@@ -16,7 +16,6 @@ import {
   DefaultTheme,
   // DarkTheme,
 } from 'react-native-paper';
-import UseCustomStateSelector from '../../useCustomStateSelector';
 
 //Stacks
 import AuthStack from './authStack';
@@ -66,27 +65,24 @@ const Routes = props => {
     <NavigationContainer
       ref={navigatorRef => Navigator.setTopLevelNavigator(navigatorRef)}>
       <PaperProvider theme={LightTheme}>
-        {/* {props.user != null ? ( */}
-        {props.userType === 'person' ? (
-          <PeopleStack />
-        ) : props.userType === 'vendor' ? (
-          <VendorStack />
+        {props.user != null ? (
+          props.user.userType === 'person' ? (
+            <PeopleStack />
+          ) : props.user.userType === 'vendor' ? (
+            <VendorStack />
+          ) : (
+            <AuthStack />
+          )
         ) : (
           <AuthStack />
         )}
-        {/* ) : null} */}
       </PaperProvider>
     </NavigationContainer>
   );
 };
 
 const mapStateToProps = state => ({
-  userType: UseCustomStateSelector(state, 'userReducer', ['userType'])[0],
+  user: state.userReducer,
 });
-
-// const CustomSelector = createSelector(
-//   [state => state.userReducer.userType],
-//   usertype => usertype,
-// );
 
 export default connect(mapStateToProps, {setUserInfoAction, setHeight})(Routes);

@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useCallback} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {InnerWrapper, TextInputPaper} from '../../../components';
@@ -12,7 +13,8 @@ import firestore from '@react-native-firebase/firestore';
 import {showSnackbar} from '../../../utils/helpers';
 import SuccessfulAddedModal from '../../../components/modals/SuccessfulAdded';
 import {generateId} from '../../../utils/helpers';
-
+import {useFocusEffect} from '@react-navigation/native';
+import {setCurrentScreen} from '../../../redux/actions';
 const AddPerson = ({theme, height, ...props}) => {
   const StyleProp = {colors: theme.colors, height};
 
@@ -30,6 +32,12 @@ const AddPerson = ({theme, height, ...props}) => {
     email: '',
     phone: '',
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(constants.appScreens.AddPerson);
+    }, []),
+  );
 
   const {collections, snackbarType} = constants;
 
@@ -243,6 +251,9 @@ const styles = ({colors, height}) =>
 const mapStateToProps = state => ({
   height: state.HeightReducer,
   user: state.userReducer,
+  currentScreen: state.ScreenReducer,
 });
 
-export default connect(mapStateToProps, {})(withTheme(AddPerson));
+export default connect(mapStateToProps, {setCurrentScreen})(
+  withTheme(AddPerson),
+);

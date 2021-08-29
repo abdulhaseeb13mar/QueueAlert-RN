@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState, useCallback} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {InnerWrapper} from '../../../components';
 import {connect} from 'react-redux';
@@ -10,6 +10,7 @@ import styles from './style';
 import constants from '../../../theme/constants';
 import {getAge, showSnackbar, SortQueue} from '../../../utils/helpers';
 import {Button} from 'react-native-paper';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   incrementNumberAction,
   setCurrentNumberAction,
@@ -17,6 +18,7 @@ import {
   setUserInfoAction,
   setQueue,
   setIsAccepting,
+  setCurrentScreen,
 } from '../../../redux/actions';
 
 const HomePage = props => {
@@ -42,6 +44,12 @@ const HomePage = props => {
     });
     return () => subscriber();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(constants.appScreens.Home);
+    }, []),
+  );
 
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -267,6 +275,7 @@ const mapStateToProps = state => ({
   currentNumber: state.NummberReducer,
   user: state.userReducer,
   queue: state.QueueReducer,
+  currentScreen: state.ScreenReducer,
 });
 
 export default connect(mapStateToProps, {
@@ -276,4 +285,5 @@ export default connect(mapStateToProps, {
   setUserInfoAction,
   setQueue,
   setIsAccepting,
+  setCurrentScreen,
 })(HomePage);

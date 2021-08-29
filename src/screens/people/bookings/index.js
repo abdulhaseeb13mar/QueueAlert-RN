@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {InnerWrapper} from '../../../components';
@@ -8,6 +8,8 @@ import constants from '../../../theme/constants';
 import {withTheme, Button} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import {showSnackbar} from '../../../utils/helpers';
+import {useFocusEffect} from '@react-navigation/native';
+import {setCurrentScreen} from '../../../redux/actions';
 
 const Bookings = ({theme, height, ...props}) => {
   const {collections, snackbarType} = constants;
@@ -24,6 +26,12 @@ const Bookings = ({theme, height, ...props}) => {
   useEffect(() => {
     getUserBookings();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      props.setCurrentScreen(constants.appScreens.Bookings);
+    }, []),
+  );
 
   const getUserBookings = async () => {
     setLoading(true);
@@ -116,6 +124,9 @@ const Bookings = ({theme, height, ...props}) => {
 const mapStateToProps = state => ({
   height: state.HeightReducer,
   user: state.userReducer,
+  currentScreen: state.ScreenReducer,
 });
 
-export default connect(mapStateToProps, {})(withTheme(Bookings));
+export default connect(mapStateToProps, {setCurrentScreen})(
+  withTheme(Bookings),
+);
