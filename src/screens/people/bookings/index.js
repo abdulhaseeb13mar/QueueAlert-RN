@@ -41,7 +41,7 @@ const Bookings = ({theme, height, ...props}) => {
           await QueueCollection.doc(thisBooking.queueId)
             .get()
             .then(queueInfo => {
-              const userBookingInfo = queueInfo.data().queue[props.user.uid];
+              const userBookingInfo = queueInfo.data()?.queue[props.user.uid];
               if (!queueInfo.exists || !userBookingInfo) {
                 shouldDatabaseUpdate = true;
               } else if (userBookingInfo.number !== thisBooking.number) {
