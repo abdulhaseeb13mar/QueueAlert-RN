@@ -1,15 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {InnerWrapper} from '../../../components';
 import constants from '../../../theme/constants';
-import {withTheme} from 'react-native-paper';
+import {withTheme, Button} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import {showSnackbar} from '../../../utils/helpers';
 
 const Bookings = ({theme, height, ...props}) => {
-  const {collections, appScreens, snackbarType} = constants;
+  const {collections, snackbarType} = constants;
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,8 @@ const Bookings = ({theme, height, ...props}) => {
   const userRef = firestore()
     .collection(collections.People)
     .doc(props.user.uid);
+
+  const QueueCollection = firestore().collection(collections.Queues);
 
   useEffect(() => {
     getUserBookings();
@@ -30,20 +33,42 @@ const Bookings = ({theme, height, ...props}) => {
         if (!userInfo.exists) {
           return Promise.reject('User does not exist');
         }
-
-        let bookings = 
-        setBookings(Object.values(userInfo.data().Booking));
-
-        for (let i = 0; i < .length; i++) {
-          const element = [i];
-          
+        let bookingArr = Object.values(userInfo.data().Booking);
+        let shouldDatabaseUpdate = false;
+        let updatedBookings = {};
+        for (let i = 0; i < bookingArr.length; i++) {
+          let thisBooking = bookingArr[i];
+          await QueueCollection.doc(thisBooking.queueId)
+            .get()
+            .then(queueInfo => {
+              const userBookingInfo = queueInfo.data().queue[props.user.uid];
+              if (!queueInfo.exists || !userBookingInfo) {
+                shouldDatabaseUpdate = true;
+              } else if (userBookingInfo.number !== thisBooking.number) {
+                shouldDatabaseUpdate = true;
+                updatedBookings[thisBooking.queueId] = {
+                  ...thisBooking,
+                  number: userBookingInfo.number,
+                };
+              } else {
+                updatedBookings[thisBooking.queueId] = {...thisBooking};
+              }
+            });
+        }
+        if (shouldDatabaseUpdate) {
+          setBookings(Object.values(updatedBookings));
+          await userRef.update({Booking: updatedBookings});
+        } else {
+          setBookings(bookingArr);
         }
       })
       .catch(err => showSnackbar(err, snackbarType.SNACKBAR_ERROR));
     setLoading(false);
   };
 
-  const StyleProp = {colors: theme.colors, height};
+  const refresh = () => getUserBookings();
+
+  // const StyleProp = {colors: theme.colors, height};
   return (
     <InnerWrapper>
       <View
@@ -53,7 +78,6 @@ const Bookings = ({theme, height, ...props}) => {
           justifyContent: 'space-between',
           width: '100%',
           marginVertical: 20,
-          // borderWidth: 2,
         }}>
         <Text style={{fontWeight: 'bold'}}>Queue</Text>
         <Text style={{fontWeight: 'bold'}}>Number</Text>
@@ -80,11 +104,14 @@ const Bookings = ({theme, height, ...props}) => {
           </View>
         ))
       )}
+      <Button mode="contained" onPress={refresh} style={{marginTop: 40}}>
+        Refresh Bookings
+      </Button>
     </InnerWrapper>
   );
 };
 
-const styles = ({colors, height}) => StyleSheet.create({});
+// const styles = ({colors, height}) => StyleSheet.create({});
 
 const mapStateToProps = state => ({
   height: state.HeightReducer,
