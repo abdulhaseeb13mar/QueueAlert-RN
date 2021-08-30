@@ -2,7 +2,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import {InnerWrapper} from '../index';
 // import constants from '../../../theme/constants';
 import {Button, withTheme} from 'react-native-paper';
 import Modal from 'react-native-modal';

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useCallback} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -14,6 +14,9 @@ import constants from '../../../theme/constants';
 import {withTheme, Button, Avatar} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import {useFocusEffect} from '@react-navigation/native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ImageSelectionModal from '../../../components/modals/ImageSelection';
+import ConfirmPhotoModal from '../../../components/modals/ConfirmPhoto';
 
 import DefaultDP from '../../../assets/default.jpg';
 
@@ -29,6 +32,9 @@ const Profile = ({theme, height, ...props}) => {
 
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const [isModal1Open, setIsModal1Open] = useState(false);
+  const [isModal2Open, setIsModal2Open] = useState(false);
+  const [uploadImage, setUploadImage] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -90,6 +96,22 @@ const Profile = ({theme, height, ...props}) => {
       .catch();
   };
 
+  const handlePhotoSelection = choice =>
+    setIsModal1Open(false) && choice === 1
+      ? launchCamera(
+          {mediaType: 'photo', saveToPhotos: false, quality: 0.4},
+          assets => !assets.didCancel && setUploadImage(assets.assets[0].uri),
+        )
+      : launchImageLibrary(
+          {mediaType: 'photo', saveToPhotos: false, quality: 0.4},
+          assets => !assets.didCancel && setUploadImage(assets.assets[0].uri),
+        );
+
+  const chooseAnotherPhoto = () =>
+    setUploadImage(null) && setIsModal1Open(true);
+
+  const handleOnUploaded = () => {};
+
   return (
     <InnerWrapper>
       <View
@@ -100,7 +122,14 @@ const Profile = ({theme, height, ...props}) => {
           borderWidth: 1,
           height: 150,
         }}>
-        <Avatar.Image size={120} source={DefaultDP} />
+        <TouchableOpacity onPress={() => setIsModal1Open(true)}>
+          <Avatar.Image size={120} source={DefaultDP} />
+          <Avatar.Icon
+            icon="pencil"
+            size={25}
+            style={{position: 'absolute', bottom: 0, right: 0}}
+          />
+        </TouchableOpacity>
         <Text>{props.user.name}</Text>
       </View>
       <Button onPress={logout} mode="contained" style={{marginBottom: 20}}>
@@ -121,6 +150,19 @@ const Profile = ({theme, height, ...props}) => {
         loading={loading2}>
         {loading2 ? '' : 'Stop Accepting'}
       </Button>
+      <ImageSelectionModal
+        isVisible={isModal1Open}
+        onClose={() => setIsModal1Open(false)}
+        onSelection={handlePhotoSelection}
+      />
+      <ConfirmPhotoModal
+        isVisible={isModal2Open}
+        onClose={() => setUploadImage(null)}
+        chooseAnotherPhoto={chooseAnotherPhoto}
+        image={uploadImage}
+        uid={props.user.uid}
+        uploaded={handleOnUploaded}
+      />
     </InnerWrapper>
   );
 };
