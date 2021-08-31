@@ -15,8 +15,8 @@ const VendorTile = ({theme, height, item, onPress}) => {
       style={styles(StyleProp).cardContainer}
       onPress={() => onPress(item)}>
       <FastImage
-        source={DefaultImage}
-        resizeMode="contain"
+        source={{uri: item.photoUrl}}
+        resizeMode="cover"
         style={styles(StyleProp).imageStyle}
       />
       <Text style={styles(StyleProp).cardText} numberOfLines={1}>

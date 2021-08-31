@@ -64,6 +64,8 @@ const SignupVendor = props => {
             userType: 'vendor',
             uid: user.uid,
             isAccepting: false,
+            photoUrl:
+              'http://futureuniversity.com/wp-content/uploads/sites/9/2015/02/default-placeholder-1024x1024-570x321.png',
           };
           setLoading(false);
           firestore()

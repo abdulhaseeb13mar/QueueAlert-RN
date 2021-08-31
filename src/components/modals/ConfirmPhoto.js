@@ -1,15 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {connect, Avatar} from 'react-redux';
-// import constants from '../../../theme/constants';
+import {connect} from 'react-redux';
 import {withTheme, Button} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import {updateProfilePhoto} from '../../redux/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import DefaultDP from '../../assets/default.jpg';
 import {constants} from '../../theme';
 
 const ConfirmPhotoModal = ({
@@ -22,6 +22,7 @@ const ConfirmPhotoModal = ({
   uid,
   uploaded,
   user,
+  ...props
 }) => {
   const StyleProp = {colors: theme.colors, height};
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,14 @@ const ConfirmPhotoModal = ({
         await firestore()
           .collection(constants.collections.Vendors)
           .doc(user.uid)
-          .update({photoUrl: url});
+          .update({photoUrl: url})
+          .then(async () => {
+            props.updateProfilePhoto({photoUrl: url});
+            await AsyncStorage.setItem(
+              constants.async.user,
+              JSON.stringify({...user, photoUrl: url}),
+            );
+          });
         return url;
       })
       .catch(() => null);
@@ -105,4 +113,6 @@ const mapStateToProps = state => ({
   user: state.userReducer,
 });
 
-export default connect(mapStateToProps, {})(withTheme(ConfirmPhotoModal));
+export default connect(mapStateToProps, {updateProfilePhoto})(
+  withTheme(ConfirmPhotoModal),
+);

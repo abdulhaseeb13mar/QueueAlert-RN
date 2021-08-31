@@ -96,8 +96,9 @@ const Profile = ({theme, height, ...props}) => {
       .catch();
   };
 
-  const handlePhotoSelection = choice =>
-    setIsModal1Open(false) && choice === 1
+  const handlePhotoSelection = choice => {
+    setIsModal1Open(false);
+    choice === 1
       ? launchCamera(
           {mediaType: 'photo', saveToPhotos: false, quality: 0.4},
           assets => !assets.didCancel && setUploadImage(assets.assets[0].uri),
@@ -106,6 +107,7 @@ const Profile = ({theme, height, ...props}) => {
           {mediaType: 'photo', saveToPhotos: false, quality: 0.4},
           assets => !assets.didCancel && setUploadImage(assets.assets[0].uri),
         );
+  };
 
   const chooseAnotherPhoto = () =>
     setUploadImage(null) && setIsModal1Open(true);
@@ -123,7 +125,7 @@ const Profile = ({theme, height, ...props}) => {
           height: 150,
         }}>
         <TouchableOpacity onPress={() => setIsModal1Open(true)}>
-          <Avatar.Image size={120} source={DefaultDP} />
+          <Avatar.Image size={120} source={{uri: props.user.photoUrl}} />
           <Avatar.Icon
             icon="pencil"
             size={25}

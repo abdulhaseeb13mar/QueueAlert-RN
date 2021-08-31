@@ -72,3 +72,12 @@ export const setIsAccepting = isAccepting => {
     });
   };
 };
+
+export const updateProfilePhoto = link => {
+  return async dispatch => {
+    dispatch({
+      type: actionTypes.UPDATE_PROFILE_PHOTO,
+      payload: link,
+    });
+  };
+};

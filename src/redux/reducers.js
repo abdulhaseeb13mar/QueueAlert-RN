@@ -19,6 +19,10 @@ const userReducer = (state = userInfo, action) => {
       state = Object.assign({}, state, {...action.payload});
       return state;
 
+    case actionTypes.UPDATE_PROFILE_PHOTO:
+      state = Object.assign({}, state, {...action.payload});
+      return state;
+
     default:
       break;
   }

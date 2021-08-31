@@ -20,6 +20,7 @@ const Constants = {
     SET_HEIGHT: 'SET_HEIGHT',
     SET_QUEUE: 'SET_QUEUE',
     SET_IS_ACCEPTING: 'SET_IS_ACCEPTING',
+    UPDATE_PROFILE_PHOTO: 'UPDATE_PROFILE_PHOTO',
   },
   authScreens: {
     Login: 'Login',
