@@ -25,8 +25,6 @@ const styles = ({colors, height}) =>
       width: '100%',
       flex: 1,
       marginTop: height * 0.02,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     flatlistStyle: {width: '100%'},
   });

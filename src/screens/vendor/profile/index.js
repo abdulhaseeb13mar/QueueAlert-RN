@@ -18,8 +18,6 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ImageSelectionModal from '../../../components/modals/ImageSelection';
 import ConfirmPhotoModal from '../../../components/modals/ConfirmPhoto';
 
-import DefaultDP from '../../../assets/default.jpg';
-
 const Profile = ({theme, height, ...props}) => {
   const {async, collections} = constants;
   const VendorRef = firestore()
@@ -121,15 +119,18 @@ const Profile = ({theme, height, ...props}) => {
           alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
-          borderWidth: 1,
           height: 150,
         }}>
         <TouchableOpacity onPress={() => setIsModal1Open(true)}>
-          <Avatar.Image size={120} source={{uri: props.user.photoUrl}} />
+          <Avatar.Image
+            size={120}
+            source={{uri: props.user.photoUrl}}
+            style={{elevation: 6}}
+          />
           <Avatar.Icon
             icon="pencil"
             size={25}
-            style={{position: 'absolute', bottom: 0, right: 0}}
+            style={{position: 'absolute', bottom: 0, right: 0, elevation: 7}}
           />
         </TouchableOpacity>
         <Text>{props.user.name}</Text>
