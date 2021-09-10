@@ -63,6 +63,7 @@ const SignupPeople = props => {
             gender: isMale ? 'male' : 'female',
             userType: 'person',
             uid: user.uid,
+            Booking: {},
           };
           setLoading(false);
           await firestore()
